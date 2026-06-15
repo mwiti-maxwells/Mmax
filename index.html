@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>maxwell's Library - Limitless Worldwide Christian Music</title>
+    <title>Borderless Christian Music Matrix</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -40,12 +40,11 @@
 <body class="bg-gradient-premium min-h-screen font-sans pb-32">
 
     <header class="border-b border-gray-900 bg-black/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 mx-auto md:mx-0">
             <i class="fa-solid fa-cross text-burnt-orange text-xl mr-1"></i>
-            <span class="text-xl md:text-2xl font-black tracking-wider text-white">maxwell's <span class="text-gold">Library</span></span>
-        </div>
-        <div class="text-xs font-bold tracking-widest uppercase text-gold bg-black px-3 py-1.5 rounded-full border border-gold/30 flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Limitless Index Active
+            <span class="text-lg md:text-2xl font-black tracking-wider text-white">
+                Borderless <span class="text-gold">Christian</span> Music Matrix
+            </span>
         </div>
     </header>
 
@@ -53,10 +52,10 @@
         
         <section class="mb-12 text-center">
             <h1 class="text-3xl md:text-5xl font-extrabold mb-4 tracking-tight">
-                Borderless <span class="text-burnt-orange">Christian</span> Music Index
+                Stream & Download <span class="text-burnt-orange">Global</span> Hits
             </h1>
             <p class="text-gray-400 max-w-xl mx-auto text-xs md:text-sm">
-                Searching cross-continental catalogs in real-time. Instantly find and play official mainstream releases and local worship tracks globally.
+                Enter any song title, phrase, or artist name below. The system automatically verifies tracks across worldwide catalogs instantly.
             </p>
         </section>
 
@@ -64,7 +63,7 @@
             <form id="search-form" class="premium-card p-2 flex flex-row gap-2 max-w-2xl mx-auto shadow-2xl">
                 <div class="flex-1 flex items-center bg-transparent px-3 py-2">
                     <i class="fa-solid fa-earth-americas text-gray-500 mr-3"></i>
-                    <input type="text" id="search-input" required placeholder="Type global artist name, song title, or choir..." class="w-full bg-transparent text-white focus:outline-none placeholder-gray-600 text-sm md:text-base">
+                    <input type="text" id="search-input" required placeholder="Type track name, artist, or lyric keywords..." class="w-full bg-transparent text-white focus:outline-none placeholder-gray-600 text-sm md:text-base">
                 </div>
                 <button type="submit" class="bg-burnt-orange hover-bg-burnt-orange text-white font-bold px-5 md:px-8 py-3 rounded-xl transition duration-300 shadow-lg text-xs md:text-sm uppercase tracking-wider">
                     Search
@@ -74,12 +73,12 @@
 
         <div id="loading" class="hidden text-center py-12">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-burnt-orange mb-4"></div>
-            <p class="text-xs uppercase tracking-widest text-gold font-semibold">Scanning worldwide media hubs...</p>
+            <p class="text-xs uppercase tracking-widest text-gold font-semibold">Processing parameters...</p>
         </div>
 
         <div id="no-results" class="hidden text-center py-12 premium-card max-w-md mx-auto p-6">
             <i class="fa-solid fa-globe text-3xl text-gold mb-3"></i>
-            <p class="text-gray-400 text-sm">No christian audio matches found. Please adjust your keywords!</p>
+            <p class="text-gray-400 text-sm">No items found matching that query in our catalog database.</p>
         </div>
 
         <section id="results-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -93,7 +92,7 @@
                 <img id="player-track-art" src="" alt="" class="w-12 h-12 rounded-lg object-cover bg-zinc-900 border border-gray-800">
                 <div class="overflow-hidden">
                     <h4 id="player-track-name" class="font-bold text-sm truncate text-white">Song Title</h4>
-                    <p id="player-track-artist" class="text-xs text-gold truncate">Worldwide Artist</p>
+                    <p id="player-track-artist" class="text-xs text-gold truncate">Artist</p>
                 </div>
             </div>
             
@@ -123,14 +122,13 @@
         const playerArtist = document.getElementById('player-track-artist');
         const playerDownloadBtn = document.getElementById('player-download-btn');
 
-        // Deep global reach catalog search array matrix
+        // Broad cross-continental market scanning nodes
         const globalRegions = ['US', 'NG', 'KE', 'ZA', 'GB', 'CA'];
 
         searchForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const userQuery = searchInput.value.trim();
-            // Automatically appends contextual filters behind the scenes
-            const absoluteChristianQuery = encodeURIComponent(userQuery + " Christian Gospel Worship");
+            const encodedQuery = encodeURIComponent(userQuery);
             
             resultsGrid.innerHTML = '';
             noResults.classList.add('hidden');
@@ -140,9 +138,9 @@
             let itemsDiscovered = false;
 
             try {
-                // Concurrently run fetch sweeps across international systems for full reach
+                // Execute clean global queries without modifying user keywords directly
                 const crossNetworkRequests = globalRegions.map(regionCode => {
-                    return fetch(`https://itunes.apple.com/search?term=${absoluteChristianQuery}&country=${regionCode}&media=music&limit=20`)
+                    return fetch(`https://itunes.apple.com/search?term=${encodedQuery}&country=${regionCode}&media=music&limit=30`)
                         .then(res => res.json())
                         .catch(() => ({ results: [] }));
                 });
@@ -153,7 +151,20 @@
                 unifiedResponses.forEach(data => {
                     if (data.results && data.results.length > 0) {
                         data.results.forEach(track => {
-                            if (!uniqueCatalogTracker.has(track.trackId)) {
+                            // Smart Internal Detection: Reads the tags on the audio file automatically
+                            const genre = (track.primaryGenreName || "").toLowerCase();
+                            const artist = (track.artistName || "").toLowerCase();
+                            const trackName = (track.trackName || "").toLowerCase();
+                            
+                            const isChristianOrGospel = 
+                                genre.includes('christian') || 
+                                genre.includes('gospel') || 
+                                genre.includes('spiritual') ||
+                                trackName.includes('worship') ||
+                                trackName.includes('praise') ||
+                                artist.includes('choir');
+                            
+                            if (isChristianOrGospel && !uniqueCatalogTracker.has(track.trackId)) {
                                 uniqueCatalogTracker.add(track.trackId);
                                 itemsDiscovered = true;
                                 generateTrackCard(track);
@@ -168,7 +179,7 @@
 
             } catch (err) {
                 loading.classList.add('hidden');
-                alert("Network timeout. Please refresh and try again.");
+                alert("Network communication issue. Please check your data connection.");
             }
         });
 
@@ -182,7 +193,7 @@
                     <div class="relative overflow-hidden rounded-xl aspect-square mb-4 bg-zinc-900 border border-gray-900">
                         <img src="${highResArtwork}" alt="" class="w-full h-full object-cover">
                         <div class="absolute top-2 right-2 bg-black/80 px-2 py-0.5 rounded text-[10px] uppercase font-black text-gold tracking-widest border border-gold/20">
-                            Live Stream
+                            Verified Track
                         </div>
                     </div>
                     <h3 class="font-bold text-sm text-white truncate mb-0.5" title="${track.trackName}">${track.trackName}</h3>
@@ -204,7 +215,7 @@
 
         function ignitePlayerEngine(url, name, artist, cover) {
             if (!url) {
-                alert("Audio stream source has protective parameters or is restricted outside digital store distribution.");
+                alert("Audio stream preview unavailable due to restrictive distribution settings.");
                 return;
             }
             playerArt.src = cover;
