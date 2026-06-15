@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            background-color: #030201;
+            background-color: #040302;
             color: #ffffff;
             position: relative;
             overflow-x: hidden;
@@ -28,7 +28,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            opacity: 0.09;
+            opacity: 0.08;
         }
 
         .vector-flame {
@@ -36,12 +36,12 @@
             height: 350px;
             background: radial-gradient(circle at 50% 80%, #ffcc00 10%, #ff6600 40%, #cc2a01 70%, transparent 90%);
             border-radius: 50% 50% 20% 20% / 70% 70% 40% 40%;
-            filter: blur(30px);
+            filter: blur(32px);
             animation: flameFlicker 4s ease-in-out infinite alternate;
         }
 
         .vector-scepter {
-            width: 18px;
+            width: 16px;
             height: 700px;
             background: linear-gradient(90deg, #111111 0%, #2b1a0a 50%, #050505 100%);
             border-radius: 4px;
@@ -53,14 +53,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, transparent 35%, #030201 95%);
+            background: radial-gradient(circle at center, transparent 35%, #040302 95%);
             z-index: -1;
             pointer-events: none;
         }
 
         @keyframes flameFlicker {
-            0% { transform: scale(0.96) rotate(-0.5deg); }
-            100% { transform: scale(1.02) rotate(0.5deg); }
+            0% { transform: scale(0.95) rotate(-0.5deg); }
+            100% { transform: scale(1.03) rotate(0.5deg); }
         }
 
         .text-gold { color: #dfb15b; }
@@ -70,15 +70,15 @@
         
         /* Premium Spotify-Inspired Compact Horizontal Track Rows */
         .spotify-row {
-            background: rgba(12, 9, 7, 0.65);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            background: rgba(15, 11, 8, 0.45);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .spotify-row:hover {
-            background: rgba(204, 90, 1, 0.15);
+            background: rgba(204, 90, 1, 0.14);
         }
         audio {
-            filter: sepia(40%) saturate(70%) grayscale(100%) contrast(95%) invert(92%);
+            filter: sepia(50%) saturate(60%) grayscale(100%) contrast(95%) invert(92%);
         }
     </style>
 </head>
@@ -90,7 +90,7 @@
     </div>
     <div class="ambient-vignette"></div>
 
-    <header class="border-b border-white/5 bg-black/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+    <header class="border-b border-white/5 bg-black/85 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-2 mx-auto md:mx-0">
             <i class="fa-solid fa-cross text-burnt-orange text-lg mr-1 animate-pulse"></i>
             <span class="text-sm md:text-base font-black tracking-widest text-white uppercase">
@@ -106,15 +106,15 @@
                 JUDAH <span class="text-burnt-orange">"PRAISE MATRIX"</span>
             </h1>
             <p class="text-gray-400 max-w-xl mx-auto text-xs md:text-sm tracking-wide">
-                Targeted algorithmic stream portal. Keeps track downloads structured cleanly in your documents folder using real names.
+                Refined search matrix. Downloads map securely to document storage with structural real-name labeling.
             </p>
         </section>
 
         <section class="mb-10">
-            <form id="search-form" class="bg-zinc-900/90 border border-white/10 rounded-full p-1.5 flex flex-row gap-2 max-w-xl mx-auto shadow-2xl backdrop-blur-md">
+            <form id="search-form" class="bg-zinc-900/95 border border-white/10 rounded-full p-1.5 flex flex-row gap-2 max-w-xl mx-auto shadow-2xl backdrop-blur-md">
                 <div class="flex-1 flex items-center bg-transparent px-4">
                     <i class="fa-solid fa-magnifying-glass text-gray-500 mr-3"></i>
-                    <input type="text" id="search-input" required placeholder="Type exact song name, choir, or artist..." class="w-full bg-transparent text-white focus:outline-none placeholder-gray-600 text-sm md:text-base">
+                    <input type="text" id="search-input" required placeholder="Search exact track title, artist, or specific choir..." class="w-full bg-transparent text-white focus:outline-none placeholder-gray-600 text-sm md:text-base">
                 </div>
                 <button type="submit" class="bg-burnt-orange hover-bg-burnt-orange text-white font-bold px-6 py-2.5 rounded-full transition duration-300 shadow-md text-xs uppercase tracking-wider">
                     Search
@@ -124,18 +124,18 @@
 
         <section class="mb-4 px-2 flex items-center justify-between">
             <h2 id="grid-context-title" class="text-xs font-bold uppercase tracking-widest text-gold/80 flex items-center gap-2">
-                <i class="fa-solid fa-microchip text-burnt-orange"></i> Aligning Algorithm Matrix...
+                <i class="fa-solid fa-arrows-spin text-burnt-orange animate-spin"></i> Loading Custom Stream Engine...
             </h2>
         </section>
 
         <div id="loading" class="hidden text-center py-16">
             <div class="inline-block animate-spin rounded-full h-7 w-7 border-t-2 border-b-2 border-burnt-orange mb-3"></div>
-            <p class="text-[11px] uppercase tracking-widest text-gold font-semibold">Filtering database nodes...</p>
+            <p class="text-[11px] uppercase tracking-widest text-gold font-semibold">Enforcing strict content protocols...</p>
         </div>
 
         <div id="no-results" class="hidden text-center py-12 bg-zinc-900/40 border border-white/5 rounded-2xl max-w-md mx-auto p-6 backdrop-blur-sm">
             <i class="fa-solid fa-filter-circle-xmark text-2xl text-burnt-orange mb-3"></i>
-            <p class="text-gray-400 text-xs md:text-sm">No verified audio files matched this sequence. Check your spelling or refine your keywords.</p>
+            <p class="text-gray-400 text-xs md:text-sm">No verified audio matches found. Refine your query keywords.</p>
         </div>
 
         <section id="results-grid" class="flex flex-col rounded-xl overflow-hidden shadow-xl border border-white/5">
@@ -189,7 +189,7 @@
             initializeAdaptiveAlgorithm();
         });
 
-        // 100% Sealed Algorithmic Dashboard Initialization Protocol
+        // 100% Locked Suggestion Strategy Engine
         async function initializeAdaptiveAlgorithm() {
             resultsGrid.innerHTML = '';
             loading.classList.remove('hidden');
@@ -197,13 +197,13 @@
             const userHistoryStack = JSON.parse(localStorage.getItem('matrix_habits_v2')) || [];
             
             if (userHistoryStack.length > 0) {
-                // If the user profile contains successful downloads, prioritize it
+                // Read exact localized keyword patterns directly from successful past conversions
                 const deviceTargetSeed = userHistoryStack[userHistoryStack.length - 1];
-                gridContextTitle.innerHTML = `<i class="fa-solid fa-user-gear text-burnt-orange"></i> Curated From Your Device Habits`;
+                gridContextTitle.innerHTML = `<i class="fa-solid fa-user-gear text-burnt-orange"></i> Curated From Your Custom Profile`;
                 executeMatrixDataExtraction(deviceTargetSeed);
             } else {
-                // Perfect Curated Fallback Strategy: Instantly triggers a safe, verified multi-word baseline query
-                gridContextTitle.innerHTML = `<i class="fa-solid fa-sparkles text-burnt-orange"></i> Recommended Gospel Suggestions`;
+                // Strict Baseline Fallback: Safe, completely pristine music queries that prevent empty loads or random file noise
+                gridContextTitle.innerHTML = `<i class="fa-solid fa-star text-burnt-orange"></i> Recommended Gospel Suggestions`;
                 executeMatrixDataExtraction("AIC Neema Gospel Choir");
             }
         }
@@ -220,28 +220,29 @@
             executeMatrixDataExtraction(userQuery);
         });
 
-        // High-Precision Structural Data Filtering Architecture
+        // High-Precision Structural Selection Architecture
         async function executeMatrixDataExtraction(queryString) {
             try {
-                // Clean input variables and remove loose common conjunctions
-                const wordsArray = queryString.toLowerCase()
-                                              .replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+                // Break words down to sanitize input arrays, dropping generic connectors
+                const cleanQuery = queryString.toLowerCase().trim();
+                const wordsArray = cleanQuery.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
                                               .split(/\s+/)
-                                              .filter(w => w.length > 1 && w !== "and" && w !== "with" && w !== "for");
+                                              .filter(w => w.length > 1 && w !== "and" && w !== "with" && w !== "for" && w !== "the");
 
                 let queryExpression = "";
                 
                 if (wordsArray.length > 1) {
-                    // Force rigorous multi-field intersection rules to block non-music files completely
-                    const titleIntersection = wordsArray.map(w => `title:${w}*`).join(' AND ');
-                    const creatorIntersection = wordsArray.map(w => `creator:${w}*`).join(' AND ');
-                    queryExpression = `(${titleIntersection}) OR (${creatorIntersection})`;
+                    // Enforce rigorous global multi-field combination query strings
+                    // This blocks arbitrary individual word matches that cause non-gospel data leaks
+                    const strictBlock = wordsArray.map(w => `(title:${w}* OR creator:${w}* OR text:${w}*)`).join(' AND ');
+                    queryExpression = `${strictBlock}`;
                 } else {
-                    queryExpression = `title:(${encodeURIComponent(queryString)}*) OR creator:(${encodeURIComponent(queryString)}*)`;
+                    queryExpression = `title:(${encodeURIComponent(queryString)}*) OR creator:(${encodeURIComponent(queryString)}*) OR text:(${encodeURIComponent(queryString)}*)`;
                 }
 
-                // Append unalterable validation parameters to permanently shut down talk shows, science segments, or audiobooks
-                const targetUrl = `https://archive.org/advancedsearch.php?q=(${queryExpression})+AND+mediatype:(audio)+AND+-subject:(podcast)+AND+-title:(show)+AND+-subject:(science)+AND+-subject:(interview)&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=40`;
+                // Explicit negative filter variables to completely disable non-music formats (podcasts, talk radio, science blogs, data sets)
+                const structuralExclusions = `-subject:(podcast) AND -title:(show) AND -subject:(science) AND -subject:(interview) AND -subject:(talk) AND -subject:(news) AND -creator:(dewtone)`;
+                const targetUrl = `https://archive.org/advancedsearch.php?q=(${queryExpression}) AND mediatype:(audio) AND (${structuralExclusions})&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=45`;
                 
                 const response = await fetch(targetUrl);
                 const data = await response.json();
@@ -259,24 +260,38 @@
                     try {
                         let songTitle = item.title || "Unmapped Matrix Node";
                         let artistName = item.creator || "JUDAH Matrix Unit";
+                        
                         const checkTitleLower = songTitle.toLowerCase();
                         const checkArtistLower = artistName.toLowerCase();
                         
-                        // Strict Safeguard Filter: Instantly discard irrelevant anomalies that slip through the API parameter cracks
+                        // Strict Safeguard Filter: Programmatic backup layer to catch non-music items instantly
                         if (checkTitleLower.includes("episode") || 
                             checkTitleLower.includes("science") || 
                             checkTitleLower.includes("radio") || 
                             checkTitleLower.includes("darwin") || 
                             checkTitleLower.includes("groks") ||
                             checkTitleLower.includes("interview") ||
-                            checkArtistLower.includes("dewtone")) {
+                            checkTitleLower.includes("discussion") ||
+                            checkTitleLower.includes("chatter") ||
+                            checkTitleLower.includes("sermon") ||
+                            checkArtistLower.includes("dewtone") ||
+                            checkArtistLower.includes("podcast")) {
                             continue; 
+                        }
+
+                        // Validate query parameters to guarantee high relevance if searching a compound query like "Ayala Eunice"
+                        if (wordsArray.length > 1) {
+                            const validationString = `${checkTitleLower} ${checkArtistLower}`;
+                            const structuralMatchMatches = wordsArray.every(word => validationString.includes(word));
+                            if (!structuralMatchMatches) {
+                                continue; // Discard loose, arbitrary results that don't match the whole keyword array
+                            }
                         }
 
                         const metaResponse = await fetch(`https://archive.org/metadata/${item.identifier}`);
                         const metaData = await metaResponse.json();
                         
-                        // Isolate standalone, high-fidelity full-length musical tracks (minimum 1.5MB)
+                        // Pick out uncompressed, full-length musical .mp3 objects (minimum 1.5 Megabytes)
                         const trackFile = metaData.files.find(f => f.name.endsWith('.mp3') && !f.name.includes('vbr') && parseFloat(f.size) > 1500000);
                         
                         if (trackFile) {
@@ -320,7 +335,7 @@
 
             } catch (err) {
                 loading.classList.add('hidden');
-                alert("Matrix latency timeout. Re-initialize parameter submission.");
+                alert("Matrix system layer timeout. Re-initialize sequence parameter query.");
             }
         }
 
@@ -342,7 +357,7 @@
         function forceFileDownload(url, name, artist) {
             const cleanFileName = `${name} - ${artist}.mp3`.replace(/[/\\?%*:|"<>]/g, '-');
             
-            // Log successful download profile keys into local storage
+            // Commit exact track information signature safely to memory log history
             logDeviceDownloadHabit(name);
 
             const statusAlert = document.createElement('div');
@@ -364,27 +379,4 @@
                     executionAnchor.download = cleanFileName;
                     
                     document.body.appendChild(executionAnchor);
-                    executionAnchor.click();
-                    
-                    document.body.removeChild(executionAnchor);
-                    window.URL.revokeObjectURL(fileObjectURL);
-                    document.body.removeChild(statusAlert);
-                })
-                .catch(() => {
-                    document.body.removeChild(statusAlert);
-                    const simpleAnchor = document.createElement('a');
-                    simpleAnchor.href = url;
-                    simpleAnchor.target = '_blank';
-                    simpleAnchor.download = cleanFileName;
-                    simpleAnchor.click();
-                });
-        }
-
-        function logDeviceDownloadHabit(trackName) {
-            let habits = JSON.parse(localStorage.getItem('matrix_habits_v2')) || [];
-            const words = trackName.toLowerCase().split(/\s+/).filter(w => w.length > 3 && w !== 'worship' && w !== 'praise' && w !== 'choir' && w !== 'track');
-            
-            if(words.length > 0) {
-                habits.push(words.join(' ')); 
-                if(habits.length > 6) habits.shift(); 
-                localStorage
+    
