@@ -41,7 +41,7 @@
         </section>
 
         <section class="mb-4 px-2">
-            <h2 id="grid-context-title" class="text-xs font-bold uppercase tracking-widest text-gold/80 flex items-center gap-2">Initializing Portal Engine...</h2>
+            <h2 id="grid-context-title" class="text-xs font-bold uppercase tracking-widest text-gold/80 flex items-center gap-2">Connecting Matrix Portal...</h2>
         </section>
 
         <div id="loading" class="hidden text-center py-12">
@@ -50,7 +50,7 @@
         </div>
 
         <div id="no-results" class="hidden text-center py-12 bg-zinc-900/40 rounded-2xl max-w-md mx-auto p-6">
-            <p class="text-gray-400 text-xs">No audio matches found. Refine your query keywords.</p>
+            <p class="text-gray-400 text-xs">No audio matches found. Try shortening your search words.</p>
         </div>
 
         <section id="results-grid" class="flex flex-col rounded-xl overflow-hidden border border-white/5"></section>
@@ -85,14 +85,16 @@
 
         let curUrl = '', curTitle = '', curArtist = '';
 
+        // Safely boot directly into fallback loading stream
         window.addEventListener('DOMContentLoaded', () => {
-            executeMatrixDataExtraction("AIC Neema Gospel Choir");
+            executeMatrixDataExtraction("Neema Gospel Choir");
         });
 
         async function triggerSearch() {
             const query = searchInput.value.trim();
             if (!query) return;
-            gridContextTitle.textContent = `Results for: "${query}"`;
+            
+            gridContextTitle.textContent = `Searching: ${query}`;
             resultsGrid.innerHTML = '';
             noResults.classList.add('hidden');
             loading.classList.remove('hidden');
@@ -100,69 +102,87 @@
         }
 
         searchSubmitBtn.addEventListener('click', triggerSearch);
-        searchInput.addEventListener('keydown', (e) => { if(e.key==='Enter') triggerSearch(); });
+        searchInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') triggerSearch(); });
 
         async function executeMatrixDataExtraction(queryString) {
             try {
-                const clean = queryString.toLowerCase().trim();
-                let words = clean.split(/\s+/).filter(w => w.length > 1 && w!=="and" && w!=="the");
-                let expr = words.length > 1 ? words.map(w => `(title:${w}* OR creator:${w}*)`).join(' AND ') : `title:(${encodeURIComponent(queryString)}*) OR creator:(${encodeURIComponent(queryString)}*)`;
+                loading.classList.remove('hidden');
+                noResults.classList.add('hidden');
                 
+                const clean = queryString.toLowerCase().trim();
+                let words = clean.split(/\s+/).filter(w => w.length > 1 && w !== "and" && w !== "the");
+                
+                // Form clear elastic query
+                let expr = words.length > 1 ? words.map(w => `(title:${w}* OR creator:${w}*)`).join(' AND ') : `(title:${encodeURIComponent(queryString)}* OR creator:${encodeURIComponent(queryString)}*)`;
                 const exclusions = `-subject:(podcast) AND -title:(show) AND -subject:(science) AND -subject:(interview)`;
-                let url = `https://archive.org/advancedsearch.php?q=(${expr}) AND mediatype:(audio) AND (${exclusions})&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=30`;
+                
+                let url = `https://archive.org/advancedsearch.php?q=(${expr}) AND mediatype:(audio) AND (${exclusions})&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=25`;
                 
                 let res = await fetch(url);
                 let data = await res.json();
                 let items = data.response.docs;
 
+                // Simple single word fallback loop if complex string returns empty
                 if ((!items || items.length === 0) && words.length > 1) {
-                    let fallback = words[words.length - 1];
-                    res = await fetch(`https://archive.org/advancedsearch.php?q=(title:${fallback}* OR creator:${fallback}*) AND mediatype:(audio) AND (${exclusions})&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=20`);
+                    let fallbackWord = words[words.length - 1];
+                    let fallbackUrl = `https://archive.org/advancedsearch.php?q=(title:${fallbackWord}* OR creator:${fallbackWord}*) AND mediatype:(audio) AND (${exclusions})&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=20`;
+                    res = await fetch(fallbackUrl);
                     data = await res.json();
                     items = data.response.docs;
                 }
 
                 loading.classList.add('hidden');
-                if (!items || items.length === 0) { noResults.classList.remove('hidden'); return; }
-
-                let rendered = 0;
                 resultsGrid.innerHTML = '';
+
+                if (!items || items.length === 0) {
+                    noResults.classList.remove('hidden');
+                    gridContextTitle.textContent = "Matrix Stream Empty";
+                    return;
+                }
+
+                gridContextTitle.textContent = `Tracks Found for "${queryString}"`;
+                let rendered = 0;
 
                 for (let item of items) {
                     let title = item.title || "Unmapped Track";
                     let artist = item.creator || "Gospel Artist";
                     let tLow = title.toLowerCase();
                     
-                    if (tLow.includes("episode") || tLow.includes("science") || tLow.includes("radio") || tLow.includes("podcast")) continue;
+                    if (tLow.includes("episode") || tLow.includes("radio") || tLow.includes("podcast")) continue;
 
-                    let metaRes = await fetch(`https://archive.org/metadata/${item.identifier}`);
-                    let metaData = await metaRes.json();
-                    let file = metaData.files.find(f => f.name.endsWith('.mp3') && !f.name.includes('vbr') && parseFloat(f.size) > 1000000);
-                    
-                    if (file) {
-                        rendered++;
-                        let dUrl = `https://archive.org/download/${item.identifier}/${encodeURIComponent(file.name)}`;
-                        let row = document.createElement('div');
-                        row.className = 'spotify-row px-4 py-3 flex items-center justify-between gap-4';
-                        row.innerHTML = `
-                            <div class="flex items-center gap-3 min-w-0 flex-1">
-                                <button onclick="playTrack('${dUrl.replace(/'/g, "\\'")}', '${title.replace(/'/g, "\\'")}', '${artist.replace(/'/g, "\\'")}')" class="w-8 h-8 rounded-full bg-white/5 hover:bg-burnt-orange text-white flex items-center justify-center flex-shrink-0">
-                                    <i class="fa-solid fa-play text-[10px]"></i>
-                                </button>
-                                <div class="truncate">
-                                    <div class="font-medium text-xs text-gray-100 truncate">${title}</div>
-                                    <div class="text-[10px] text-gray-400 truncate">${artist}</div>
+                    try {
+                        let metaRes = await fetch(`https://archive.org/metadata/${item.identifier}`);
+                        let metaData = await metaRes.json();
+                        let file = metaData.files.find(f => f.name.endsWith('.mp3') && !f.name.includes('vbr') && parseFloat(f.size) > 1000000);
+                        
+                        if (file) {
+                            rendered++;
+                            let dUrl = `https://archive.org/download/${item.identifier}/${encodeURIComponent(file.name)}`;
+                            let row = document.createElement('div');
+                            row.className = 'spotify-row px-4 py-3 flex items-center justify-between gap-4';
+                            row.innerHTML = `
+                                <div class="flex items-center gap-3 min-w-0 flex-1">
+                                    <button onclick="playTrack('${dUrl.replace(/'/g, "\\'")}', '${title.replace(/'/g, "\\'")}', '${artist.replace(/'/g, "\\'")}')" class="w-8 h-8 rounded-full bg-white/5 hover:bg-burnt-orange text-white flex items-center justify-center flex-shrink-0">
+                                        <i class="fa-solid fa-play text-[10px]"></i>
+                                    </button>
+                                    <div class="truncate">
+                                        <div class="font-medium text-xs text-gray-100 truncate">${title}</div>
+                                        <div class="text-[10px] text-gray-400 truncate">${artist}</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <button onclick="downloadTrack('${dUrl.replace(/'/g, "\\'")}', '${title.replace(/'/g, "\\'")}', '${artist.replace(/'/g, "\\'")}')" class="p-2 text-gray-400 hover:text-burnt-orange">
-                                <i class="fa-solid fa-cloud-arrow-down text-xs"></i>
-                            </button>
-                        `;
-                        resultsGrid.appendChild(row);
-                    }
+                                <button onclick="downloadTrack('${dUrl.replace(/'/g, "\\'")}', '${title.replace(/'/g, "\\'")}', '${artist.replace(/'/g, "\\'")}')" class="p-2 text-gray-400 hover:text-burnt-orange">
+                                    <i class="fa-solid fa-cloud-arrow-down text-xs"></i>
+                                </button>
+                            `;
+                            resultsGrid.appendChild(row);
+                        }
+                    } catch(err) { continue; }
                 }
                 if (rendered === 0) noResults.classList.remove('hidden');
-            } catch (e) { loading.classList.add('hidden'); noResults.classList.remove('hidden'); }
+            } catch (e) { 
+                loading.classList.add('hidden'); 
+                noResults.classList.remove('hidden'); 
+            }
         }
 
         function playTrack(url, title, artist) {
