@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            background-color: #040302;
+            background-color: #030201;
             color: #ffffff;
             position: relative;
             overflow-x: hidden;
@@ -28,7 +28,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            opacity: 0.10;
+            opacity: 0.09;
         }
 
         .vector-flame {
@@ -36,12 +36,12 @@
             height: 350px;
             background: radial-gradient(circle at 50% 80%, #ffcc00 10%, #ff6600 40%, #cc2a01 70%, transparent 90%);
             border-radius: 50% 50% 20% 20% / 70% 70% 40% 40%;
-            filter: blur(28px);
+            filter: blur(30px);
             animation: flameFlicker 4s ease-in-out infinite alternate;
         }
 
         .vector-scepter {
-            width: 20px;
+            width: 18px;
             height: 700px;
             background: linear-gradient(90deg, #111111 0%, #2b1a0a 50%, #050505 100%);
             border-radius: 4px;
@@ -53,29 +53,29 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, transparent 30%, #040302 95%);
+            background: radial-gradient(circle at center, transparent 35%, #030201 95%);
             z-index: -1;
             pointer-events: none;
         }
 
         @keyframes flameFlicker {
-            0% { transform: scale(0.95) rotate(-0.5deg); opacity: 0.85; }
-            100% { transform: scale(1.03) rotate(0.5deg); opacity: 0.95; }
+            0% { transform: scale(0.96) rotate(-0.5deg); }
+            100% { transform: scale(1.02) rotate(0.5deg); }
         }
 
-        .text-gold { color: #e5b869; }
-        .text-burnt-orange { color: #d65f04; }
-        .bg-burnt-orange { background-color: #d65f04; }
-        .hover-bg-burnt-orange:hover { background-color: #f26c05; }
+        .text-gold { color: #dfb15b; }
+        .text-burnt-orange { color: #cc5a01; }
+        .bg-burnt-orange { background-color: #cc5a01; }
+        .hover-bg-burnt-orange:hover { background-color: #e66501; }
         
-        /* Spotify List UI Component styling definitions */
+        /* Premium Spotify-Inspired Compact Horizontal Track Rows */
         .spotify-row {
-            background: rgba(18, 14, 11, 0.55);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            transition: all 0.2s ease;
+            background: rgba(12, 9, 7, 0.65);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .spotify-row:hover {
-            background: rgba(214, 95, 4, 0.12);
+            background: rgba(204, 90, 1, 0.15);
         }
         audio {
             filter: sepia(40%) saturate(70%) grayscale(100%) contrast(95%) invert(92%);
@@ -90,7 +90,7 @@
     </div>
     <div class="ambient-vignette"></div>
 
-    <header class="border-b border-white/5 bg-black/75 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+    <header class="border-b border-white/5 bg-black/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-2 mx-auto md:mx-0">
             <i class="fa-solid fa-cross text-burnt-orange text-lg mr-1 animate-pulse"></i>
             <span class="text-sm md:text-base font-black tracking-widest text-white uppercase">
@@ -106,7 +106,7 @@
                 JUDAH <span class="text-burnt-orange">"PRAISE MATRIX"</span>
             </h1>
             <p class="text-gray-400 max-w-xl mx-auto text-xs md:text-sm tracking-wide">
-                Strict metadata extraction engine filtering out external noise to isolate clean full-track files instantly.
+                Targeted algorithmic stream portal. Keeps track downloads structured cleanly in your documents folder using real names.
             </p>
         </section>
 
@@ -114,7 +114,7 @@
             <form id="search-form" class="bg-zinc-900/90 border border-white/10 rounded-full p-1.5 flex flex-row gap-2 max-w-xl mx-auto shadow-2xl backdrop-blur-md">
                 <div class="flex-1 flex items-center bg-transparent px-4">
                     <i class="fa-solid fa-magnifying-glass text-gray-500 mr-3"></i>
-                    <input type="text" id="search-input" required placeholder="Search song title, artist, or specific choir..." class="w-full bg-transparent text-white focus:outline-none placeholder-gray-600 text-sm md:text-base">
+                    <input type="text" id="search-input" required placeholder="Type exact song name, choir, or artist..." class="w-full bg-transparent text-white focus:outline-none placeholder-gray-600 text-sm md:text-base">
                 </div>
                 <button type="submit" class="bg-burnt-orange hover-bg-burnt-orange text-white font-bold px-6 py-2.5 rounded-full transition duration-300 shadow-md text-xs uppercase tracking-wider">
                     Search
@@ -124,18 +124,18 @@
 
         <section class="mb-4 px-2 flex items-center justify-between">
             <h2 id="grid-context-title" class="text-xs font-bold uppercase tracking-widest text-gold/80 flex items-center gap-2">
-                <i class="fa-solid fa-bolt text-burnt-orange"></i> Stream Module Status Active
+                <i class="fa-solid fa-microchip text-burnt-orange"></i> Aligning Algorithm Matrix...
             </h2>
         </section>
 
         <div id="loading" class="hidden text-center py-16">
             <div class="inline-block animate-spin rounded-full h-7 w-7 border-t-2 border-b-2 border-burnt-orange mb-3"></div>
-            <p class="text-[11px] uppercase tracking-widest text-gold font-semibold">Isolating target audio waveforms...</p>
+            <p class="text-[11px] uppercase tracking-widest text-gold font-semibold">Filtering database nodes...</p>
         </div>
 
         <div id="no-results" class="hidden text-center py-12 bg-zinc-900/40 border border-white/5 rounded-2xl max-w-md mx-auto p-6 backdrop-blur-sm">
             <i class="fa-solid fa-filter-circle-xmark text-2xl text-burnt-orange mb-3"></i>
-            <p class="text-gray-400 text-xs md:text-sm">No precise full-track audio sequence matches found. Refine your query parameters.</p>
+            <p class="text-gray-400 text-xs md:text-sm">No verified audio files matched this sequence. Check your spelling or refine your keywords.</p>
         </div>
 
         <section id="results-grid" class="flex flex-col rounded-xl overflow-hidden shadow-xl border border-white/5">
@@ -189,35 +189,29 @@
             initializeAdaptiveAlgorithm();
         });
 
+        // 100% Sealed Algorithmic Dashboard Initialization Protocol
         async function initializeAdaptiveAlgorithm() {
             resultsGrid.innerHTML = '';
             loading.classList.remove('hidden');
 
-            let regionalKeyword = "Worship"; 
-            const deviceTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
-            
-            if(deviceTimezone.includes("Nairobi") || deviceTimezone.includes("Mombasa") || deviceTimezone.includes("Africa")) {
-                regionalKeyword = "Eunice Njeri";
-                gridContextTitle.innerHTML = `<i class="fa-solid fa-location-dot text-burnt-orange"></i> Regional Stream Profile: East Africa`;
-            } else {
-                gridContextTitle.innerHTML = `<i class="fa-solid fa-globe text-burnt-orange"></i> Adaptive Discover Picks`;
-            }
-
             const userHistoryStack = JSON.parse(localStorage.getItem('matrix_habits_v2')) || [];
-            let optimizedSeedQuery = regionalKeyword;
-
+            
             if (userHistoryStack.length > 0) {
-                optimizedSeedQuery = userHistoryStack[userHistoryStack.length - 1];
-                gridContextTitle.innerHTML = `<i class="fa-solid fa-clock-rotate-left text-burnt-orange"></i> Tuning personalized stream indices...`;
+                // If the user profile contains successful downloads, prioritize it
+                const deviceTargetSeed = userHistoryStack[userHistoryStack.length - 1];
+                gridContextTitle.innerHTML = `<i class="fa-solid fa-user-gear text-burnt-orange"></i> Curated From Your Device Habits`;
+                executeMatrixDataExtraction(deviceTargetSeed);
+            } else {
+                // Perfect Curated Fallback Strategy: Instantly triggers a safe, verified multi-word baseline query
+                gridContextTitle.innerHTML = `<i class="fa-solid fa-sparkles text-burnt-orange"></i> Recommended Gospel Suggestions`;
+                executeMatrixDataExtraction("AIC Neema Gospel Choir");
             }
-
-            executeMatrixDataExtraction(optimizedSeedQuery);
         }
 
         searchForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const userQuery = searchInput.value.trim();
-            gridContextTitle.innerHTML = `<i class="fa-solid fa-list text-gold"></i> Live Matrix Tracks For: "${userQuery}"`;
+            gridContextTitle.innerHTML = `<i class="fa-solid fa-compact-disc text-gold animate-spin" style="animation-duration:6s;"></i> Verified Tracks For: "${userQuery}"`;
             
             resultsGrid.innerHTML = '';
             noResults.classList.add('hidden');
@@ -226,22 +220,28 @@
             executeMatrixDataExtraction(userQuery);
         });
 
-        // Advanced Multi-Stage Filtering Content Engine
+        // High-Precision Structural Data Filtering Architecture
         async function executeMatrixDataExtraction(queryString) {
             try {
-                // Formulate target terms splitting compound phrases to avoid false cross-field description matches
-                const termsArray = queryString.toLowerCase().split(/\s+/).filter(t => t.length > 1);
-                let buildSearchQueryStr = "";
+                // Clean input variables and remove loose common conjunctions
+                const wordsArray = queryString.toLowerCase()
+                                              .replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+                                              .split(/\s+/)
+                                              .filter(w => w.length > 1 && w !== "and" && w !== "with" && w !== "for");
+
+                let queryExpression = "";
                 
-                if (termsArray.length > 1) {
-                    // Create intersection logic ensuring strict matching rules over loose OR pairings
-                    buildSearchQueryStr = `(${termsArray.map(t => `title:${t}`).join(' AND ')}) OR (${termsArray.map(t => `creator:${t}`).join(' AND ')})`;
+                if (wordsArray.length > 1) {
+                    // Force rigorous multi-field intersection rules to block non-music files completely
+                    const titleIntersection = wordsArray.map(w => `title:${w}*`).join(' AND ');
+                    const creatorIntersection = wordsArray.map(w => `creator:${w}*`).join(' AND ');
+                    queryExpression = `(${titleIntersection}) OR (${creatorIntersection})`;
                 } else {
-                    buildSearchQueryStr = `title:(${encodeURIComponent(queryString)}) OR creator:(${encodeURIComponent(queryString)})`;
+                    queryExpression = `title:(${encodeURIComponent(queryString)}*) OR creator:(${encodeURIComponent(queryString)}*)`;
                 }
 
-                // Inject structural metadata classification variables (gospel/worship/choir audio filters)
-                const targetUrl = `https://archive.org/advancedsearch.php?q=(${buildSearchQueryStr})+AND+mediatype:(audio)+AND+-subject:(podcast)+AND+-title:(show)&fl[]=identifier,title,creator,runtime&sort[]=downloads+desc&output=json&rows=35`;
+                // Append unalterable validation parameters to permanently shut down talk shows, science segments, or audiobooks
+                const targetUrl = `https://archive.org/advancedsearch.php?q=(${queryExpression})+AND+mediatype:(audio)+AND+-subject:(podcast)+AND+-title:(show)+AND+-subject:(science)+AND+-subject:(interview)&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=40`;
                 
                 const response = await fetch(targetUrl);
                 const data = await response.json();
@@ -257,39 +257,45 @@
 
                 for (const item of items) {
                     try {
-                        // Clean up title values to eliminate system markers
-                        let songTitle = item.title || "Unmapped Track Node";
+                        let songTitle = item.title || "Unmapped Matrix Node";
                         let artistName = item.creator || "JUDAH Matrix Unit";
-
-                        // Strict Filter: Verify track isn't a long talk show block or standard podcast episode leak
-                        const lowercaseTitle = songTitle.toLowerCase();
-                        if (lowercaseTitle.includes("episode") || lowercaseTitle.includes("science show") || lowercaseTitle.includes("radio talk")) {
+                        const checkTitleLower = songTitle.toLowerCase();
+                        const checkArtistLower = artistName.toLowerCase();
+                        
+                        // Strict Safeguard Filter: Instantly discard irrelevant anomalies that slip through the API parameter cracks
+                        if (checkTitleLower.includes("episode") || 
+                            checkTitleLower.includes("science") || 
+                            checkTitleLower.includes("radio") || 
+                            checkTitleLower.includes("darwin") || 
+                            checkTitleLower.includes("groks") ||
+                            checkTitleLower.includes("interview") ||
+                            checkArtistLower.includes("dewtone")) {
                             continue; 
                         }
 
                         const metaResponse = await fetch(`https://archive.org/metadata/${item.identifier}`);
                         const metaData = await metaResponse.json();
                         
-                        // Grab actual uncompressed full tracks avoiding tiny metadata remnants
-                        const trackFile = metaData.files.find(f => f.name.endsWith('.mp3') && !f.name.includes('vbr') && parseFloat(f.size) > 1200000);
+                        // Isolate standalone, high-fidelity full-length musical tracks (minimum 1.5MB)
+                        const trackFile = metaData.files.find(f => f.name.endsWith('.mp3') && !f.name.includes('vbr') && parseFloat(f.size) > 1500000);
                         
                         if (trackFile) {
                             const fullAudioUrl = `https://archive.org/download/${item.identifier}/${encodeURIComponent(trackFile.name)}`;
                             linesRendered++;
 
-                            // Construct a sleek Spotify list row UI entry
+                            // Construct Premium Spotify Horizontal Grid Rows
                             const trackRow = document.createElement('div');
                             trackRow.className = 'spotify-row px-4 py-3 flex items-center justify-between gap-4';
                             
                             trackRow.innerHTML = `
                                 <div class="flex items-center gap-3 min-w-0 flex-1">
-                                    <div class="text-xs text-gray-500 font-mono w-5 text-right">${linesRendered}</div>
+                                    <div class="text-xs text-gray-600 font-mono w-5 text-right">${linesRendered}</div>
                                     <button onclick="ignitePlayerEngine('${fullAudioUrl.replace(/'/g, "\\'")}', '${songTitle.replace(/'/g, "\\'")}', '${artistName.replace(/'/g, "\\'")}')" 
-                                        class="w-8 h-8 rounded-full bg-white/5 hover:bg-burnt-orange text-white flex items-center justify-center transition-colors group cursor-pointer flex-shrink-0">
-                                        <i class="fa-solid fa-play text-[10px] group-hover:translate-x-0.5"></i>
+                                        class="w-8 h-8 rounded-full bg-white/5 hover:bg-burnt-orange text-white flex items-center justify-center transition-all group cursor-pointer flex-shrink-0">
+                                        <i class="fa-solid fa-play text-[9px] group-hover:translate-x-0.5 transition-transform"></i>
                                     </button>
                                     <div class="truncate">
-                                        <div class="font-medium text-xs md:text-sm text-white truncate" title="${songTitle}">${songTitle}</div>
+                                        <div class="font-medium text-xs md:text-sm text-gray-100 truncate" title="${songTitle}">${songTitle}</div>
                                         <div class="text-[11px] text-gray-400 truncate mt-0.5">${artistName}</div>
                                     </div>
                                 </div>
@@ -314,7 +320,7 @@
 
             } catch (err) {
                 loading.classList.add('hidden');
-                alert("Matrix tracking latency encountered. Re-initialize sequence.");
+                alert("Matrix latency timeout. Re-initialize parameter submission.");
             }
         }
 
@@ -335,14 +341,50 @@
 
         function forceFileDownload(url, name, artist) {
             const cleanFileName = `${name} - ${artist}.mp3`.replace(/[/\\?%*:|"<>]/g, '-');
+            
+            // Log successful download profile keys into local storage
             logDeviceDownloadHabit(name);
 
             const statusAlert = document.createElement('div');
             statusAlert.className = 'fixed top-4 right-4 bg-burnt-orange text-white px-4 py-2 rounded-xl text-xs font-bold z-50 shadow-2xl';
-            statusAlert.textContent = "Writing file package to document storage...";
+            statusAlert.textContent = "Writing file package to documents folder...";
             document.body.appendChild(statusAlert);
 
             fetch(url)
                 .then(res => {
-                    if (!res.ok)
-        
+                    if (!res.ok) throw new Error();
+                    return res.blob();
+                })
+                .then(fileData => {
+                    const cleanBlob = new Blob([fileData], { type: 'audio/mpeg' });
+                    const fileObjectURL = window.URL.createObjectURL(cleanBlob);
+                    
+                    const executionAnchor = document.createElement('a');
+                    executionAnchor.href = fileObjectURL;
+                    executionAnchor.download = cleanFileName;
+                    
+                    document.body.appendChild(executionAnchor);
+                    executionAnchor.click();
+                    
+                    document.body.removeChild(executionAnchor);
+                    window.URL.revokeObjectURL(fileObjectURL);
+                    document.body.removeChild(statusAlert);
+                })
+                .catch(() => {
+                    document.body.removeChild(statusAlert);
+                    const simpleAnchor = document.createElement('a');
+                    simpleAnchor.href = url;
+                    simpleAnchor.target = '_blank';
+                    simpleAnchor.download = cleanFileName;
+                    simpleAnchor.click();
+                });
+        }
+
+        function logDeviceDownloadHabit(trackName) {
+            let habits = JSON.parse(localStorage.getItem('matrix_habits_v2')) || [];
+            const words = trackName.toLowerCase().split(/\s+/).filter(w => w.length > 3 && w !== 'worship' && w !== 'praise' && w !== 'choir' && w !== 'track');
+            
+            if(words.length > 0) {
+                habits.push(words.join(' ')); 
+                if(habits.length > 6) habits.shift(); 
+                localStorage
