@@ -43,7 +43,7 @@
 
         <section class="mb-4 px-1">
             <h2 id="grid-context-title" class="text-[11px] font-bold uppercase tracking-widest text-gold flex items-center gap-2">
-                <i class="fa-solid fa-magnifying-glass text-xs"></i> Ready for input
+                <i class="fa-solid fa-magnifying-glass text-xs"></i> Synchronizing Core Stream...
             </h2>
         </section>
 
@@ -53,7 +53,7 @@
         </div>
 
         <div id="no-results" class="hidden text-center py-12 bg-zinc-900/30 rounded-xl max-w-md mx-auto p-6 border border-white/5">
-            <p class="text-gray-400 text-xs">No full audio files matched this sequence. Broaden your keywords!</p>
+            <p class="text-gray-400 text-xs">No full audio files matched this sequence. Try alternative keywords!</p>
         </div>
 
         <div id="results-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
@@ -90,9 +90,9 @@
 
         let curUrl = '', curTitle = '', curArtist = '';
 
-        // Auto-loads original beautiful dashboard state with valid track data
+        // Uses highly optimized seed string to ensure dashboard immediately renders stunning music cards on open
         window.addEventListener('DOMContentLoaded', () => {
-            executeMatrixDataExtraction("Zoravo"); 
+            executeMatrixDataExtraction("Eunice Njeri"); 
         });
 
         async function triggerSearch() {
@@ -119,7 +119,7 @@
                 noResults.classList.add('hidden');
                 
                 let cleanQuery = encodeURIComponent(queryString.trim());
-                const filterRules = `mediatype:(audio) AND -subject:(podcast) AND -subject:(poem) AND -subject:(poetry) AND -collection:(opensource_audio_books)`;
+                const filterRules = `mediatype:(audio) AND -subject:(podcast) AND -subject:(poem) AND -subject:(poetry) AND -collection:(opensource_audio_books) AND -subject:(chatter)`;
                 
                 let url = `https://archive.org/advancedsearch.php?q=(title:(${cleanQuery}) OR creator:(${cleanQuery})) AND ${filterRules}&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=24`;
                 
@@ -143,9 +143,11 @@
 
                 if (!items || items.length === 0) {
                     noResults.classList.remove('hidden');
+                    gridContextTitle.textContent = "No Live Payloads Found";
                     return;
                 }
 
+                gridContextTitle.textContent = `Active Matrix Feeds`;
                 let rendered = 0;
 
                 for (let item of items) {
@@ -164,7 +166,6 @@
                             rendered++;
                             let dUrl = `https://archive.org/download/${item.identifier}/${encodeURIComponent(file.name)}`;
                             
-                            // Re-creates the original gorgeous rounded dashboard preview card design
                             let card = document.createElement('div');
                             card.className = 'matrix-card p-2 flex flex-col justify-between';
                             card.innerHTML = `
