@@ -85,15 +85,19 @@
 
         let curUrl = '', curTitle = '', curArtist = '';
 
-        // Safely boot directly into fallback loading stream
         window.addEventListener('DOMContentLoaded', () => {
-            executeMatrixDataExtraction("Neema Gospel Choir");
+            executeMatrixDataExtraction("Eunice Njeri");
         });
 
         async function triggerSearch() {
-            const query = searchInput.value.trim();
+            let query = searchInput.value.trim();
             if (!query) return;
             
+            // Clean out local device prefixes if users add "Ayala" natively
+            if(query.toLowerCase().includes("ayala")) {
+                query = query.toLowerCase().replace("ayala", "").trim();
+            }
+
             gridContextTitle.textContent = `Searching: ${query}`;
             resultsGrid.innerHTML = '';
             noResults.classList.add('hidden');
@@ -112,20 +116,22 @@
                 const clean = queryString.toLowerCase().trim();
                 let words = clean.split(/\s+/).filter(w => w.length > 1 && w !== "and" && w !== "the");
                 
-                // Form clear elastic query
+                // Formulate target query matching gospel tags natively
                 let expr = words.length > 1 ? words.map(w => `(title:${w}* OR creator:${w}*)`).join(' AND ') : `(title:${encodeURIComponent(queryString)}* OR creator:${encodeURIComponent(queryString)}*)`;
-                const exclusions = `-subject:(podcast) AND -title:(show) AND -subject:(science) AND -subject:(interview)`;
                 
-                let url = `https://archive.org/advancedsearch.php?q=(${expr}) AND mediatype:(audio) AND (${exclusions})&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=25`;
+                // Hardened structural guardrails against non-music files
+                const exclusions = `-subject:(podcast) AND -title:(show) AND -subject:(poem) AND -subject:(poetry) AND -subject:(forum) AND -title:(episode)`;
+                
+                let url = `https://archive.org/advancedsearch.php?q=(${expr}) AND mediatype:(audio) AND (${exclusions})&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=30`;
                 
                 let res = await fetch(url);
                 let data = await res.json();
                 let items = data.response.docs;
 
-                // Simple single word fallback loop if complex string returns empty
+                // Fallback loop handling composite names cleanly 
                 if ((!items || items.length === 0) && words.length > 1) {
-                    let fallbackWord = words[words.length - 1];
-                    let fallbackUrl = `https://archive.org/advancedsearch.php?q=(title:${fallbackWord}* OR creator:${fallbackWord}*) AND mediatype:(audio) AND (${exclusions})&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=20`;
+                    let fallbackPhrase = `${words[0]} ${words[1]}`; // e.g. "eunice njeri"
+                    let fallbackUrl = `https://archive.org/advancedsearch.php?q=(title:(${encodeURIComponent(fallbackPhrase)})* OR creator:(${encodeURIComponent(fallbackPhrase)})*) AND mediatype:(audio) AND (${exclusions})&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=20`;
                     res = await fetch(fallbackUrl);
                     data = await res.json();
                     items = data.response.docs;
@@ -140,20 +146,22 @@
                     return;
                 }
 
-                gridContextTitle.textContent = `Tracks Found for "${queryString}"`;
+                gridContextTitle.textContent = `Verified Tracks Found`;
                 let rendered = 0;
 
                 for (let item of items) {
                     let title = item.title || "Unmapped Track";
                     let artist = item.creator || "Gospel Artist";
                     let tLow = title.toLowerCase();
+                    let aLow = artist.toLowerCase();
                     
-                    if (tLow.includes("episode") || tLow.includes("radio") || tLow.includes("podcast")) continue;
+                    // Filter out international chatter and broken forum dumps dynamically
+                    if (tLow.includes("episode") || tLow.includes("poem") || tLow.includes("various") || aLow.includes("forum") || tLow.includes("forum")) continue;
 
                     try {
                         let metaRes = await fetch(`https://archive.org/metadata/${item.identifier}`);
                         let metaData = await metaRes.json();
-                        let file = metaData.files.find(f => f.name.endsWith('.mp3') && !f.name.includes('vbr') && parseFloat(f.size) > 1000000);
+                        let file = metaData.files.find(f => f.name.endsWith('.mp3') && !f.name.includes('vbr') && parseFloat(f.size) > 1500000);
                         
                         if (file) {
                             rendered++;
