@@ -52,10 +52,10 @@
         
         <section class="mb-12 text-center">
             <h1 class="text-3xl md:text-5xl font-extrabold mb-4 tracking-tight">
-                Stream & Download <span class="text-burnt-orange">Global</span> Hits
+                Stream & Download <span class="text-burnt-orange">Full Length</span> Audio
             </h1>
             <p class="text-gray-400 max-w-xl mx-auto text-xs md:text-sm">
-                Enter any song title, phrase, or artist name below. The system automatically verifies tracks across worldwide catalogs instantly.
+                Scanning decentralized web archives. Music saves locally as a document file matching its true title.
             </p>
         </section>
 
@@ -63,7 +63,7 @@
             <form id="search-form" class="premium-card p-2 flex flex-row gap-2 max-w-2xl mx-auto shadow-2xl">
                 <div class="flex-1 flex items-center bg-transparent px-3 py-2">
                     <i class="fa-solid fa-earth-americas text-gray-500 mr-3"></i>
-                    <input type="text" id="search-input" required placeholder="Type track name, artist, or lyric keywords..." class="w-full bg-transparent text-white focus:outline-none placeholder-gray-600 text-sm md:text-base">
+                    <input type="text" id="search-input" required placeholder="Search full worship tracks, artists, or choirs..." class="w-full bg-transparent text-white focus:outline-none placeholder-gray-600 text-sm md:text-base">
                 </div>
                 <button type="submit" class="bg-burnt-orange hover-bg-burnt-orange text-white font-bold px-5 md:px-8 py-3 rounded-xl transition duration-300 shadow-lg text-xs md:text-sm uppercase tracking-wider">
                     Search
@@ -73,12 +73,12 @@
 
         <div id="loading" class="hidden text-center py-12">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-burnt-orange mb-4"></div>
-            <p class="text-xs uppercase tracking-widest text-gold font-semibold">Processing parameters...</p>
+            <p class="text-xs uppercase tracking-widest text-gold font-semibold">Retrieving full-track source media...</p>
         </div>
 
         <div id="no-results" class="hidden text-center py-12 premium-card max-w-md mx-auto p-6">
             <i class="fa-solid fa-globe text-3xl text-gold mb-3"></i>
-            <p class="text-gray-400 text-sm">No items found matching that query in our catalog database.</p>
+            <p class="text-gray-400 text-sm">No complete files matched this specific query. Try checking the spelling!</p>
         </div>
 
         <section id="results-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -89,7 +89,9 @@
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             
             <div class="flex items-center gap-3 w-full md:w-1/3">
-                <img id="player-track-art" src="" alt="" class="w-12 h-12 rounded-lg object-cover bg-zinc-900 border border-gray-800">
+                <div class="w-12 h-12 rounded-lg bg-zinc-900 border border-gray-800 flex items-center justify-center text-gold shadow-inner">
+                    <i class="fa-solid fa-music text-lg animate-pulse text-burnt-orange"></i>
+                </div>
                 <div class="overflow-hidden">
                     <h4 id="player-track-name" class="font-bold text-sm truncate text-white">Song Title</h4>
                     <p id="player-track-artist" class="text-xs text-gold truncate">Artist</p>
@@ -101,9 +103,9 @@
             </div>
             
             <div class="w-full md:w-1/3 flex justify-end">
-                <a id="player-download-btn" href="#" download target="_blank" class="flex items-center gap-2 bg-transparent border border-burnt-orange text-white hover:bg-burnt-orange text-xs font-bold px-4 py-2 rounded-xl transition duration-300 group">
-                    <i class="fa-solid fa-cloud-arrow-down text-burnt-orange group-hover:text-white"></i> Get Track Source
-                </a>
+                <button id="player-download-btn" class="flex items-center gap-2 bg-transparent border border-burnt-orange text-white hover:bg-burnt-orange text-xs font-bold px-4 py-2 rounded-xl transition duration-300 group">
+                    <i class="fa-solid fa-cloud-arrow-down text-burnt-orange group-hover:text-white"></i> Download Full MP3
+                </button>
             </div>
         </div>
     </footer>
@@ -117,112 +119,97 @@
 
         const playerContainer = document.getElementById('audio-player-container');
         const mainAudio = document.getElementById('main-audio-element');
-        const playerArt = document.getElementById('player-track-art');
         const playerName = document.getElementById('player-track-name');
         const playerArtist = document.getElementById('player-track-artist');
         const playerDownloadBtn = document.getElementById('player-download-btn');
 
-        // Broad cross-continental market scanning nodes
-        const globalRegions = ['US', 'NG', 'KE', 'ZA', 'GB', 'CA'];
+        let currentActiveUrl = '';
+        let currentActiveTitle = '';
 
         searchForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const userQuery = searchInput.value.trim();
-            const encodedQuery = encodeURIComponent(userQuery);
             
             resultsGrid.innerHTML = '';
             noResults.classList.add('hidden');
             loading.classList.remove('hidden');
 
-            const uniqueCatalogTracker = new Set();
-            let itemsDiscovered = false;
-
             try {
-                // Execute clean global queries without modifying user keywords directly
-                const crossNetworkRequests = globalRegions.map(regionCode => {
-                    return fetch(`https://itunes.apple.com/search?term=${encodedQuery}&country=${regionCode}&media=music&limit=30`)
-                        .then(res => res.json())
-                        .catch(() => ({ results: [] }));
-                });
+                const archiveSearchUrl = `https://archive.org/advancedsearch.php?q=title:(${encodeURIComponent(userQuery)})+AND+mediatype:(audio)+AND+(subject:(gospel)+OR+subject:(christian)+OR+subject:(worship)+OR+subject:(church))&fl[]=identifier,title,creator,downloads&sort[]=downloads+desc&output=json&rows=24`;
+                
+                const response = await fetch(archiveSearchUrl);
+                const data = await response.json();
+                const items = data.response.docs;
 
-                const unifiedResponses = await Promise.all(crossNetworkRequests);
-                loading.classList.add('hidden');
+                if (!items || items.length === 0) {
+                    loading.classList.add('hidden');
+                    noResults.classList.remove('hidden');
+                    return;
+                }
 
-                unifiedResponses.forEach(data => {
-                    if (data.results && data.results.length > 0) {
-                        data.results.forEach(track => {
-                            // Smart Internal Detection: Reads the tags on the audio file automatically
-                            const genre = (track.primaryGenreName || "").toLowerCase();
-                            const artist = (track.artistName || "").toLowerCase();
-                            const trackName = (track.trackName || "").toLowerCase();
+                let cardsRendered = 0;
+
+                for (const item of items) {
+                    try {
+                        const metaResponse = await fetch(`https://archive.org/metadata/${item.identifier}`);
+                        const metaData = await metaResponse.json();
+                        const trackFile = metaData.files.find(f => f.name.endsWith('.mp3') && !f.name.includes('vbr'));
+                        
+                        if (trackFile) {
+                            const fullAudioUrl = `https://archive.org/download/${item.identifier}/${encodeURIComponent(trackFile.name)}`;
+                            const songTitle = item.title || trackFile.name.replace('.mp3', '');
+                            const artistName = item.creator || "Global Worship Artist";
                             
-                            const isChristianOrGospel = 
-                                genre.includes('christian') || 
-                                genre.includes('gospel') || 
-                                genre.includes('spiritual') ||
-                                trackName.includes('worship') ||
-                                trackName.includes('praise') ||
-                                artist.includes('choir');
+                            const card = document.createElement('div');
+                            card.className = 'premium-card p-5 flex flex-col justify-between';
                             
-                            if (isChristianOrGospel && !uniqueCatalogTracker.has(track.trackId)) {
-                                uniqueCatalogTracker.add(track.trackId);
-                                itemsDiscovered = true;
-                                generateTrackCard(track);
-                            }
-                        });
+                            card.innerHTML = `
+                                <div>
+                                    <div class="relative overflow-hidden rounded-xl aspect-square mb-4 bg-zinc-900 border border-gray-900 flex flex-col items-center justify-center text-center p-4">
+                                        <i class="fa-solid fa-compact-disc text-5xl text-gold/40 mb-3 animate-spin" style="animation-duration: 8s;"></i>
+                                        <span class="absolute bottom-2 right-2 bg-burnt-orange px-2 py-0.5 rounded text-[9px] uppercase font-black text-white tracking-widest">
+                                            Full Length
+                                        </span>
+                                    </div>
+                                    <h3 class="font-bold text-sm text-white truncate mb-0.5" title="${songTitle}">${songTitle}</h3>
+                                    <p class="text-xs text-gold truncate mb-2">${artistName}</p>
+                                </div>
+                                <div class="mt-4 pt-3 border-t border-gray-900 flex gap-2">
+                                    <button onclick="ignitePlayerEngine('${fullAudioUrl.replace(/'/g, "\\'")}', '${songTitle.replace(/'/g, "\\'")}', '${artistName.replace(/'/g, "\\'")}')" 
+                                        class="flex-1 py-2 rounded-xl bg-burnt-orange text-white text-xs font-bold transition hover:opacity-90 active:scale-95 cursor-pointer">
+                                        <i class="fa-solid fa-play mr-1"></i> Stream Full
+                                    </button>
+                                    <button onclick="forceFileDownload('${fullAudioUrl.replace(/'/g, "\\'")}', '${songTitle.replace(/'/g, "\\'")}', '${artistName.replace(/'/g, "\\'")}')" 
+                                        class="px-3 py-2 rounded-xl bg-zinc-900 border border-gray-800 text-gold hover:text-white hover:bg-burnt-orange hover:border-burnt-orange text-xs font-bold flex items-center justify-center transition active:scale-95">
+                                        <i class="fa-solid fa-download"></i>
+                                    </button>
+                                </div>
+                            `;
+                            resultsGrid.appendChild(card);
+                            cardsRendered++;
+                        }
+                    } catch (e) {
+                        continue;
                     }
-                });
+                }
 
-                if (!itemsDiscovered) {
+                loading.classList.add('hidden');
+                if (cardsRendered === 0) {
                     noResults.classList.remove('hidden');
                 }
 
             } catch (err) {
                 loading.classList.add('hidden');
-                alert("Network communication issue. Please check your data connection.");
+                alert("Network matrix latency encountered. Try repeating the command.");
             }
         });
 
-        function generateTrackCard(track) {
-            const highResArtwork = track.artworkUrl100.replace('100x100bb.jpg', '400x400bb.jpg');
-            const card = document.createElement('div');
-            card.className = 'premium-card p-5 flex flex-col justify-between';
+        function ignitePlayerEngine(url, name, artist) {
+            currentActiveUrl = url;
+            currentActiveTitle = `${name} - ${artist}`;
             
-            card.innerHTML = `
-                <div>
-                    <div class="relative overflow-hidden rounded-xl aspect-square mb-4 bg-zinc-900 border border-gray-900">
-                        <img src="${highResArtwork}" alt="" class="w-full h-full object-cover">
-                        <div class="absolute top-2 right-2 bg-black/80 px-2 py-0.5 rounded text-[10px] uppercase font-black text-gold tracking-widest border border-gold/20">
-                            Verified Track
-                        </div>
-                    </div>
-                    <h3 class="font-bold text-sm text-white truncate mb-0.5" title="${track.trackName}">${track.trackName}</h3>
-                    <p class="text-xs text-gold truncate mb-2">${track.artistName}</p>
-                </div>
-                <div class="mt-4 pt-3 border-t border-gray-900 flex gap-2">
-                    <button onclick="ignitePlayerEngine('${track.previewUrl}', '${track.trackName.replace(/'/g, "\\'")}', '${track.artistName.replace(/'/g, "\\'")}', '${highResArtwork}')" 
-                        class="flex-1 py-2 rounded-xl bg-burnt-orange text-white text-xs font-bold transition hover:opacity-90 active:scale-95 cursor-pointer">
-                        <i class="fa-solid fa-play mr-1"></i> Listen
-                    </button>
-                    <a href="${track.previewUrl}" download="${track.trackName}.mp3" target="_blank" 
-                        class="px-3 py-2 rounded-xl bg-zinc-900 border border-gray-800 text-gold hover:text-white hover:bg-burnt-orange hover:border-burnt-orange text-xs font-bold flex items-center justify-center transition active:scale-95">
-                        <i class="fa-solid fa-download"></i>
-                    </a>
-                </div>
-            `;
-            resultsGrid.appendChild(card);
-        }
-
-        function ignitePlayerEngine(url, name, artist, cover) {
-            if (!url) {
-                alert("Audio stream preview unavailable due to restrictive distribution settings.");
-                return;
-            }
-            playerArt.src = cover;
             playerName.textContent = name;
             playerArtist.textContent = artist;
-            playerDownloadBtn.href = url;
-            playerDownloadBtn.setAttribute('download', `${name} - ${artist}.mp3`);
             
             mainAudio.src = url;
             playerContainer.classList.remove('hidden');
@@ -230,6 +217,52 @@
             
             mainAudio.play();
         }
+
+        function forceFileDownload(url, name, artist) {
+            const cleanFileName = `${name} - ${artist}.mp3`.replace(/[/\\?%*:|"<>]/g, '-');
+            
+            const loaderMsg = document.createElement('div');
+            loaderMsg.className = 'fixed top-4 right-4 bg-burnt-orange text-white px-4 py-2 rounded-xl text-xs font-bold z-50 shadow-2xl animate-bounce';
+            loaderMsg.textContent = "Packaging audio document...";
+            document.body.appendChild(loaderMsg);
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network issue targeting audio package.');
+                    return response.blob();
+                })
+                .then(blob => {
+                    const documentBlob = new Blob([blob], { type: 'audio/mpeg' });
+                    const blobUrl = window.URL.createObjectURL(documentBlob);
+                    
+                    const temporaryAnchor = document.createElement('a');
+                    temporaryAnchor.href = blobUrl;
+                    temporaryAnchor.download = cleanFileName;
+                    
+                    document.body.appendChild(temporaryAnchor);
+                    temporaryAnchor.click();
+                    
+                    document.body.removeChild(temporaryAnchor);
+                    window.URL.revokeObjectURL(blobUrl);
+                    document.body.removeChild(loaderMsg);
+                })
+                .catch(() => {
+                    document.body.removeChild(loaderMsg);
+                    const fallbackAnchor = document.createElement('a');
+                    fallbackAnchor.href = url;
+                    fallbackAnchor.target = '_blank';
+                    fallbackAnchor.download = cleanFileName;
+                    fallbackAnchor.click();
+                });
+        }
+
+        playerDownloadBtn.addEventListener('click', () => {
+            if (currentActiveUrl) {
+                const nameText = playerName.textContent;
+                const artistText = playerArtist.textContent;
+                forceFileDownload(currentActiveUrl, nameText, artistText);
+            }
+        });
     </script>
 </body>
 </html>
