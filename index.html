@@ -49,11 +49,11 @@
 
         <div id="loading" class="hidden text-center py-12">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-t-transparent border-burnt-orange mb-3"></div>
-            <p class="text-[10px] tracking-widest text-gold uppercase">Aligning Algorithm Matrix...</p>
+            <p class="text-[10px] tracking-widest text-gold uppercase">Filtering Stream Feed...</p>
         </div>
 
         <div id="no-results" class="hidden text-center py-12 bg-zinc-900/30 rounded-xl max-w-md mx-auto p-6 border border-white/5">
-            <p class="text-gray-400 text-xs">No full audio files matched this sequence. Try alternative keywords!</p>
+            <p class="text-gray-400 text-xs">No gospel music items matched this sequence. Try expanding your search terms.</p>
         </div>
 
         <div id="results-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
@@ -90,7 +90,6 @@
 
         let curUrl = '', curTitle = '', curArtist = '';
 
-        // Uses highly optimized seed string to ensure dashboard immediately renders stunning music cards on open
         window.addEventListener('DOMContentLoaded', () => {
             executeMatrixDataExtraction("Eunice Njeri"); 
         });
@@ -119,9 +118,10 @@
                 noResults.classList.add('hidden');
                 
                 let cleanQuery = encodeURIComponent(queryString.trim());
-                const filterRules = `mediatype:(audio) AND -subject:(podcast) AND -subject:(poem) AND -subject:(poetry) AND -collection:(opensource_audio_books) AND -subject:(chatter)`;
+                // Structural query barriers built directly into API call
+                const filterRules = `mediatype:(audio) AND -subject:(podcast) AND -subject:(poem) AND -subject:(poetry) AND -collection:(opensource_audio_books)`;
                 
-                let url = `https://archive.org/advancedsearch.php?q=(title:(${cleanQuery}) OR creator:(${cleanQuery})) AND ${filterRules}&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=24`;
+                let url = `https://archive.org/advancedsearch.php?q=(title:(${cleanQuery}) OR creator:(${cleanQuery})) AND ${filterRules}&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=35`;
                 
                 let res = await fetch(url);
                 let data = await res.json();
@@ -131,7 +131,7 @@
                     let words = queryString.split(/\s+/);
                     if (words.length > 1) {
                         let primaryWord = encodeURIComponent(words[words.length - 1]);
-                        let fallbackUrl = `https://archive.org/advancedsearch.php?q=(title:(${primaryWord}) OR creator:(${primaryWord})) AND ${filterRules}&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=16`;
+                        let fallbackUrl = `https://archive.org/advancedsearch.php?q=(title:(${primaryWord}) OR creator:(${primaryWord})) AND ${filterRules}&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=20`;
                         res = await fetch(fallbackUrl);
                         data = await res.json();
                         items = data.response.docs;
@@ -143,19 +143,27 @@
 
                 if (!items || items.length === 0) {
                     noResults.classList.remove('hidden');
-                    gridContextTitle.textContent = "No Live Payloads Found";
                     return;
                 }
 
-                gridContextTitle.textContent = `Active Matrix Feeds`;
                 let rendered = 0;
+
+                // Hard structural word-blacklist targeting secular and non-music archives
+                const blocklist = [
+                    'weed', 'bible', 'chapter', 'book', 'audio_news', 'shoutout', 
+                    'episode', 'concert', 'forum', 'various', 'classical', 'poetry',
+                    'sympathizer', 'rebel', 'political', 'speech', 'conference'
+                ];
 
                 for (let item of items) {
                     let title = item.title || "Unmapped Track";
                     let artist = item.creator || "JUDAH Matrix Unit";
                     let tLow = title.toLowerCase();
+                    let aLow = artist.toLowerCase();
                     
-                    if (tLow.includes("episode") || tLow.includes("concert") || tLow.includes("forum") || tLow.includes("various")) continue;
+                    // Client-side hard filtration loop execution
+                    let isBlocked = blocklist.some(word => tLow.includes(word) || aLow.includes(word));
+                    if (isBlocked) continue;
 
                     try {
                         let metaRes = await fetch(`https://archive.org/metadata/${item.identifier}`);
