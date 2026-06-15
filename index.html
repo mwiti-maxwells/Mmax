@@ -8,41 +8,64 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            background-color: #050403;
+            background-color: #030201;
             color: #ffffff;
             position: relative;
             overflow-x: hidden;
         }
 
-        /* Fixed Center Torch Backdrop Overlay matching Image Blueprint */
-        .torch-bg-overlay {
+        /* Pure CSS Rendered Centered Background Torch & Flame Blueprint */
+        .torch-container-bg {
             position: fixed;
-            top: 0;
+            top: -5%;
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
-            max-width: 800px;
-            height: 100%;
-            background-image: url('https://images.unsplash.com/photo-1612296727716-d6c69d2a2cbb?q=80&w=1000&auto=format&fit=crop'); 
-            background-size: contain;
-            background-position: center top;
-            background-repeat: no-repeat;
-            opacity: 0.15; /* Perfectly balanced for the second image's high-contrast glow */
-            mix-blend-mode: screen;
+            max-width: 600px;
+            height: 120vh;
             z-index: -2;
             pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0.12; /* Keeps it beautifully subtle as a background layer */
         }
 
-        /* Ultra Darkening Ambient Shadow Base Layer */
+        /* Dynamic Blazing Flame Layer */
+        .vector-flame {
+            width: 280px;
+            height: 350px;
+            background: radial-gradient(circle at 50% 80%, #ffcc00 10%, #ff6600 40%, #cc2a01 70%, transparent 90%);
+            border-radius: 50% 50% 20% 20% / 70% 70% 40% 40%;
+            filter: blur(25px);
+            animation: flameFlicker 4s ease-in-out infinite alternate;
+        }
+
+        /* Torch Handle Scepter */
+        .vector-scepter {
+            width: 24px;
+            height: 700px;
+            background: linear-gradient(90deg, #111111 0%, #332211 50%, #050505 100%);
+            border-radius: 4px;
+            box-shadow: 0 0 40px rgba(204, 90, 1, 0.3);
+        }
+
+        /* Vignette Contrast Shade Box */
         .ambient-vignette {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, rgba(11, 8, 5, 0.4) 0%, rgba(3, 2, 1, 0.95) 85%);
+            background: radial-gradient(circle at center, transparent 20%, #030201 90%);
             z-index: -1;
             pointer-events: none;
+        }
+
+        @keyframes flameFlicker {
+            0% { transform: scale(0.95) rotate(-1deg); opacity: 0.8; filter: blur(25px); }
+            50% { transform: scale(1.05) rotate(1deg); opacity: 1; filter: blur(20px); }
+            100% { transform: scale(0.98) rotate(-0.5deg); opacity: 0.9; filter: blur(28px); }
         }
 
         .text-gold { color: #dfb15b; }
@@ -52,11 +75,11 @@
         .hover-bg-burnt-orange:hover { background-color: #e66501; }
         
         .premium-card {
-            background: rgba(14, 11, 8, 0.88);
+            background: rgba(10, 8, 6, 0.82);
             border: 1px solid rgba(223, 177, 91, 0.12);
             border-radius: 1.25rem;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(12px);
         }
         .premium-card:hover {
             border-color: #cc5a01;
@@ -70,10 +93,13 @@
 </head>
 <body class="min-h-screen font-sans pb-32">
 
-    <div class="torch-bg-overlay"></div>
+    <div class="torch-container-bg">
+        <div class="vector-flame"></div>
+        <div class="vector-scepter"></div>
+    </div>
     <div class="ambient-vignette"></div>
 
-    <header class="border-b border-gray-900/60 bg-black/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+    <header class="border-b border-gray-900/40 bg-black/85 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-2 mx-auto md:mx-0">
             <i class="fa-solid fa-cross text-burnt-orange text-xl mr-1 animate-pulse"></i>
             <span class="text-base md:text-xl font-black tracking-widest text-white uppercase">
@@ -113,7 +139,7 @@
 
         <div id="loading" class="hidden text-center py-12">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-burnt-orange mb-4"></div>
-            <p class="text-xs uppercase tracking-widest text-gold font-semibold">Parsing regional audio nodes...</p>
+            <p class="text-xs uppercase tracking-widest text-gold font-semibold">Parsing audio nodes...</p>
         </div>
 
         <div id="no-results" class="hidden text-center py-12 premium-card max-w-md mx-auto p-6">
@@ -168,50 +194,42 @@
         let currentActiveTitle = '';
         let currentActiveArtist = '';
 
-        // Trigger adaptive processing matrix layout on boot sequence load
         window.addEventListener('DOMContentLoaded', () => {
             initializeAdaptiveAlgorithm();
         });
 
-        // Smart Adaptive Algorithm System Core
         async function initializeAdaptiveAlgorithm() {
             resultsGrid.innerHTML = '';
             loading.classList.remove('hidden');
 
-            // 1. Geography Discovery Matrix Node
             let regionalKeyword = "Worship"; 
             const deviceTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
             
-            // If device location footprint matches East/West/South African nodes, target localized assets
-            if(deviceTimezone.includes("Nairobi") || deviceTimezone.includes("Harare") || deviceTimezone.includes("Lagos") || deviceTimezone.includes("Africa")) {
-                regionalKeyword = "Swahili Worship Choir";
-                gridContextTitle.innerHTML = `<i class="fa-solid fa-location-dot text-burnt-orange"></i> Regional Focus: East Africa Hits`;
+            if(deviceTimezone.includes("Nairobi") || deviceTimezone.includes("Mombasa") || deviceTimezone.includes("Africa")) {
+                regionalKeyword = "Agape Gospel Choir";
+                gridContextTitle.innerHTML = `<i class="fa-solid fa-location-dot text-burnt-orange"></i> Localized Suggestions: East Africa`;
             } else {
                 gridContextTitle.innerHTML = `<i class="fa-solid fa-globe text-burnt-orange"></i> Global Matrix Picks`;
             }
 
-            // 2. Personalization History Weight Profile Engine
             const userHistoryStack = JSON.parse(localStorage.getItem('matrix_habits_v2')) || [];
             let optimizedSeedQuery = regionalKeyword;
 
             if (userHistoryStack.length > 0) {
-                // Pull the most frequent downloaded word context tag to shift personalization weights
                 const highlyRankedKeyword = modeCalculation(userHistoryStack);
                 optimizedSeedQuery = `${highlyRankedKeyword}`;
-                gridContextTitle.innerHTML = `<i class="fa-solid fa-heart text-burnt-orange"></i> Based On Your Device History`;
+                gridContextTitle.innerHTML = `<i class="fa-solid fa-heart text-burnt-orange"></i> Based On Your Device Habits`;
             }
 
             executeMatrixDataExtraction(optimizedSeedQuery);
         }
 
-        // Subroutine helper determining array modes
         function modeCalculation(arr){
             return arr.sort((a,b) =>
                   arr.filter(v => v===a).length - arr.filter(v => v===b).length
             ).pop();
         }
 
-        // Standardized abstraction capturing search form actions
         searchForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const userQuery = searchInput.value.trim();
@@ -224,10 +242,11 @@
             executeMatrixDataExtraction(userQuery);
         });
 
-        // Unified cross-border file discovery stream pipeline
         async function executeMatrixDataExtraction(queryString) {
             try {
-                const archiveSearchUrl = `https://archive.org/advancedsearch.php?q=title:(${encodeURIComponent(queryString)})+AND+mediatype:(audio)&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=28`;
+                // Multi-field scanning layout configuration: Targets title, creator, or description keywords simultaneously
+                const encodedQuery = encodeURIComponent(queryString);
+                const archiveSearchUrl = `https://archive.org/advancedsearch.php?q=(title:(${encodedQuery})+OR+creator:(${encodedQuery})+OR+description:(${encodedQuery}))+AND+mediatype:(audio)&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=32`;
                 
                 const response = await fetch(archiveSearchUrl);
                 const data = await response.json();
@@ -245,8 +264,7 @@
                     try {
                         const metaResponse = await fetch(`https://archive.org/metadata/${item.identifier}`);
                         const metaData = await metaResponse.json();
-                        // Isolate uncompressed full length file tracks greater than 2MB size barrier limits
-                        const trackFile = metaData.files.find(f => f.name.endsWith('.mp3') && !f.name.includes('vbr') && parseFloat(f.size) > 2000000);
+                        const trackFile = metaData.files.find(f => f.name.endsWith('.mp3') && !f.name.includes('vbr') && parseFloat(f.size) > 1500000);
                         
                         if (trackFile) {
                             const fullAudioUrl = `https://archive.org/download/${item.identifier}/${encodeURIComponent(trackFile.name)}`;
@@ -259,9 +277,9 @@
                             card.innerHTML = `
                                 <div>
                                     <div class="relative overflow-hidden rounded-xl aspect-square mb-4 bg-zinc-950 border border-gray-900/40 flex flex-col items-center justify-center text-center p-4">
-                                        <i class="fa-solid fa-shield-halved text-4xl text-gold/20 mb-2"></i>
+                                        <i class="fa-solid fa-compact-disc text-4xl text-gold/20 mb-2 animate-spin" style="animation-duration: 20s;"></i>
                                         <span class="absolute bottom-2 right-2 bg-burnt-orange/90 px-2 py-0.5 rounded text-[9px] uppercase font-bold text-white tracking-widest">
-                                            Full Audio
+                                            Full Track
                                         </span>
                                     </div>
                                     <h3 class="font-bold text-sm text-white truncate mb-0.5" title="${songTitle}">${songTitle}</h3>
@@ -293,7 +311,7 @@
 
             } catch (err) {
                 loading.classList.add('hidden');
-                alert("Network communication timeout. Repeat selection sequence.");
+                alert("Matrix system layer latency. Please refresh and try again.");
             }
         }
 
@@ -312,11 +330,8 @@
             mainAudio.play();
         }
 
-        // Advanced local metadata system injection download wrapper 
         function forceFileDownload(url, name, artist) {
             const cleanFileName = `${name} - ${artist}.mp3`.replace(/[/\\?%*:|"<>]/g, '-');
-            
-            // Record download signature trends to build personalized device profiles
             logDeviceDownloadHabit(name);
 
             const statusAlert = document.createElement('div');
@@ -354,15 +369,13 @@
                 });
         }
 
-        // Memory logging loop helping the device profile algorithm train over time
         function logDeviceDownloadHabit(trackName) {
             let habits = JSON.parse(localStorage.getItem('matrix_habits_v2')) || [];
-            // Parse individual string seeds out of the track name attributes
             const words = trackName.toLowerCase().split(/\s+/).filter(w => w.length > 3 && w !== 'worship' && w !== 'praise' && w !== 'choir');
             
             if(words.length > 0) {
-                habits.push(words[0]); // Add primary seed identifier
-                if(habits.length > 15) habits.shift(); // Keep cache size small and fast
+                habits.push(words[0]); 
+                if(habits.length > 15) habits.shift(); 
                 localStorage.setItem('matrix_habits_v2', JSON.stringify(habits));
             }
         }
