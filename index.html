@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            background-color: #040302;
+            background-color: #030201;
             color: #ffffff;
             position: relative;
             overflow-x: hidden;
@@ -53,7 +53,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, transparent 35%, #040302 95%);
+            background: radial-gradient(circle at center, transparent 35%, #030201 95%);
             z-index: -1;
             pointer-events: none;
         }
@@ -70,12 +70,12 @@
         
         /* Premium Spotify-Inspired Compact Horizontal Track Rows */
         .spotify-row {
-            background: rgba(15, 11, 8, 0.45);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            background: rgba(15, 11, 8, 0.55);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .spotify-row:hover {
-            background: rgba(204, 90, 1, 0.14);
+            background: rgba(204, 90, 1, 0.16);
         }
         audio {
             filter: sepia(50%) saturate(60%) grayscale(100%) contrast(95%) invert(92%);
@@ -111,12 +111,12 @@
         </section>
 
         <section class="mb-10">
-            <form id="search-form" class="bg-zinc-900/95 border border-white/10 rounded-full p-1.5 flex flex-row gap-2 max-w-xl mx-auto shadow-2xl backdrop-blur-md">
+            <form id="search-form" onsubmit="return false;" class="bg-zinc-900/95 border border-white/10 rounded-full p-1.5 flex flex-row gap-2 max-w-xl mx-auto shadow-2xl backdrop-blur-md">
                 <div class="flex-1 flex items-center bg-transparent px-4">
                     <i class="fa-solid fa-magnifying-glass text-gray-500 mr-3"></i>
                     <input type="text" id="search-input" required placeholder="Search exact track title, artist, or specific choir..." class="w-full bg-transparent text-white focus:outline-none placeholder-gray-600 text-sm md:text-base">
                 </div>
-                <button type="submit" class="bg-burnt-orange hover-bg-burnt-orange text-white font-bold px-6 py-2.5 rounded-full transition duration-300 shadow-md text-xs uppercase tracking-wider">
+                <button type="button" id="search-submit-btn" class="bg-burnt-orange hover-bg-burnt-orange text-white font-bold px-6 py-2.5 rounded-full transition duration-300 shadow-md text-xs uppercase tracking-wider">
                     Search
                 </button>
             </form>
@@ -124,7 +124,7 @@
 
         <section class="mb-4 px-2 flex items-center justify-between">
             <h2 id="grid-context-title" class="text-xs font-bold uppercase tracking-widest text-gold/80 flex items-center gap-2">
-                <i class="fa-solid fa-arrows-spin text-burnt-orange animate-spin"></i> Loading Custom Stream Engine...
+                <i class="fa-solid fa-microchip text-burnt-orange animate-pulse"></i> Initializing Stream Engine...
             </h2>
         </section>
 
@@ -146,237 +146,5 @@
         <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             
             <div class="flex items-center gap-3 w-full md:w-1/3">
-                <div class="w-10 h-10 rounded-md bg-burnt-orange/20 border border-burnt-orange/30 flex items-center justify-center text-burnt-orange shadow-inner">
-                    <i class="fa-solid fa-music text-sm animate-pulse"></i>
-                </div>
-                <div class="overflow-hidden">
-                    <h4 id="player-track-name" class="font-bold text-xs md:text-sm truncate text-white">Song Title</h4>
-                    <p id="player-track-artist" class="text-[11px] text-gold truncate">Artist Node</p>
-                </div>
-            </div>
-            
-            <div class="w-full md:w-1/3 flex justify-center">
-                <audio id="main-audio-element" controls class="w-full max-w-md"></audio>
-            </div>
-            
-            <div class="w-full md:w-1/3 flex justify-end">
-                <button id="player-download-btn" class="w-full md:w-auto flex items-center justify-center gap-2 bg-burnt-orange hover-bg-burnt-orange text-white text-xs font-bold px-4 py-2 rounded-lg transition duration-200">
-                    <i class="fa-solid fa-download"></i> Save Document File
-                </button>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        const searchForm = document.getElementById('search-form');
-        const searchInput = document.getElementById('search-input');
-        const resultsGrid = document.getElementById('results-grid');
-        const loading = document.getElementById('loading');
-        const noResults = document.getElementById('no-results');
-        const gridContextTitle = document.getElementById('grid-context-title');
-
-        const playerContainer = document.getElementById('audio-player-container');
-        const mainAudio = document.getElementById('main-audio-element');
-        const playerName = document.getElementById('player-track-name');
-        const playerArtist = document.getElementById('player-track-artist');
-        const playerDownloadBtn = document.getElementById('player-download-btn');
-
-        let currentActiveUrl = '';
-        let currentActiveTitle = '';
-        let currentActiveArtist = '';
-
-        window.addEventListener('DOMContentLoaded', () => {
-            initializeAdaptiveAlgorithm();
-        });
-
-        // 100% Locked Suggestion Strategy Engine
-        async function initializeAdaptiveAlgorithm() {
-            resultsGrid.innerHTML = '';
-            loading.classList.remove('hidden');
-
-            const userHistoryStack = JSON.parse(localStorage.getItem('matrix_habits_v2')) || [];
-            
-            if (userHistoryStack.length > 0) {
-                // Read exact localized keyword patterns directly from successful past conversions
-                const deviceTargetSeed = userHistoryStack[userHistoryStack.length - 1];
-                gridContextTitle.innerHTML = `<i class="fa-solid fa-user-gear text-burnt-orange"></i> Curated From Your Custom Profile`;
-                executeMatrixDataExtraction(deviceTargetSeed);
-            } else {
-                // Strict Baseline Fallback: Safe, completely pristine music queries that prevent empty loads or random file noise
-                gridContextTitle.innerHTML = `<i class="fa-solid fa-star text-burnt-orange"></i> Recommended Gospel Suggestions`;
-                executeMatrixDataExtraction("AIC Neema Gospel Choir");
-            }
-        }
-
-        searchForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const userQuery = searchInput.value.trim();
-            gridContextTitle.innerHTML = `<i class="fa-solid fa-compact-disc text-gold animate-spin" style="animation-duration:6s;"></i> Verified Tracks For: "${userQuery}"`;
-            
-            resultsGrid.innerHTML = '';
-            noResults.classList.add('hidden');
-            loading.classList.remove('hidden');
-            
-            executeMatrixDataExtraction(userQuery);
-        });
-
-        // High-Precision Structural Selection Architecture
-        async function executeMatrixDataExtraction(queryString) {
-            try {
-                // Break words down to sanitize input arrays, dropping generic connectors
-                const cleanQuery = queryString.toLowerCase().trim();
-                const wordsArray = cleanQuery.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
-                                              .split(/\s+/)
-                                              .filter(w => w.length > 1 && w !== "and" && w !== "with" && w !== "for" && w !== "the");
-
-                let queryExpression = "";
-                
-                if (wordsArray.length > 1) {
-                    // Enforce rigorous global multi-field combination query strings
-                    // This blocks arbitrary individual word matches that cause non-gospel data leaks
-                    const strictBlock = wordsArray.map(w => `(title:${w}* OR creator:${w}* OR text:${w}*)`).join(' AND ');
-                    queryExpression = `${strictBlock}`;
-                } else {
-                    queryExpression = `title:(${encodeURIComponent(queryString)}*) OR creator:(${encodeURIComponent(queryString)}*) OR text:(${encodeURIComponent(queryString)}*)`;
-                }
-
-                // Explicit negative filter variables to completely disable non-music formats (podcasts, talk radio, science blogs, data sets)
-                const structuralExclusions = `-subject:(podcast) AND -title:(show) AND -subject:(science) AND -subject:(interview) AND -subject:(talk) AND -subject:(news) AND -creator:(dewtone)`;
-                const targetUrl = `https://archive.org/advancedsearch.php?q=(${queryExpression}) AND mediatype:(audio) AND (${structuralExclusions})&fl[]=identifier,title,creator&sort[]=downloads+desc&output=json&rows=45`;
-                
-                const response = await fetch(targetUrl);
-                const data = await response.json();
-                const items = data.response.docs;
-
-                if (!items || items.length === 0) {
-                    loading.classList.add('hidden');
-                    noResults.classList.remove('hidden');
-                    return;
-                }
-
-                let linesRendered = 0;
-
-                for (const item of items) {
-                    try {
-                        let songTitle = item.title || "Unmapped Matrix Node";
-                        let artistName = item.creator || "JUDAH Matrix Unit";
-                        
-                        const checkTitleLower = songTitle.toLowerCase();
-                        const checkArtistLower = artistName.toLowerCase();
-                        
-                        // Strict Safeguard Filter: Programmatic backup layer to catch non-music items instantly
-                        if (checkTitleLower.includes("episode") || 
-                            checkTitleLower.includes("science") || 
-                            checkTitleLower.includes("radio") || 
-                            checkTitleLower.includes("darwin") || 
-                            checkTitleLower.includes("groks") ||
-                            checkTitleLower.includes("interview") ||
-                            checkTitleLower.includes("discussion") ||
-                            checkTitleLower.includes("chatter") ||
-                            checkTitleLower.includes("sermon") ||
-                            checkArtistLower.includes("dewtone") ||
-                            checkArtistLower.includes("podcast")) {
-                            continue; 
-                        }
-
-                        // Validate query parameters to guarantee high relevance if searching a compound query like "Ayala Eunice"
-                        if (wordsArray.length > 1) {
-                            const validationString = `${checkTitleLower} ${checkArtistLower}`;
-                            const structuralMatchMatches = wordsArray.every(word => validationString.includes(word));
-                            if (!structuralMatchMatches) {
-                                continue; // Discard loose, arbitrary results that don't match the whole keyword array
-                            }
-                        }
-
-                        const metaResponse = await fetch(`https://archive.org/metadata/${item.identifier}`);
-                        const metaData = await metaResponse.json();
-                        
-                        // Pick out uncompressed, full-length musical .mp3 objects (minimum 1.5 Megabytes)
-                        const trackFile = metaData.files.find(f => f.name.endsWith('.mp3') && !f.name.includes('vbr') && parseFloat(f.size) > 1500000);
-                        
-                        if (trackFile) {
-                            const fullAudioUrl = `https://archive.org/download/${item.identifier}/${encodeURIComponent(trackFile.name)}`;
-                            linesRendered++;
-
-                            // Construct Premium Spotify Horizontal Grid Rows
-                            const trackRow = document.createElement('div');
-                            trackRow.className = 'spotify-row px-4 py-3 flex items-center justify-between gap-4';
-                            
-                            trackRow.innerHTML = `
-                                <div class="flex items-center gap-3 min-w-0 flex-1">
-                                    <div class="text-xs text-gray-600 font-mono w-5 text-right">${linesRendered}</div>
-                                    <button onclick="ignitePlayerEngine('${fullAudioUrl.replace(/'/g, "\\'")}', '${songTitle.replace(/'/g, "\\'")}', '${artistName.replace(/'/g, "\\'")}')" 
-                                        class="w-8 h-8 rounded-full bg-white/5 hover:bg-burnt-orange text-white flex items-center justify-center transition-all group cursor-pointer flex-shrink-0">
-                                        <i class="fa-solid fa-play text-[9px] group-hover:translate-x-0.5 transition-transform"></i>
-                                    </button>
-                                    <div class="truncate">
-                                        <div class="font-medium text-xs md:text-sm text-gray-100 truncate" title="${songTitle}">${songTitle}</div>
-                                        <div class="text-[11px] text-gray-400 truncate mt-0.5">${artistName}</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-4 flex-shrink-0">
-                                    <button onclick="forceFileDownload('${fullAudioUrl.replace(/'/g, "\\'")}', '${songTitle.replace(/'/g, "\\'")}', '${artistName.replace(/'/g, "\\'")}')" 
-                                        class="p-2 text-gray-400 hover:text-burnt-orange transition-colors text-xs md:text-sm">
-                                        <i class="fa-solid fa-cloud-arrow-down"></i>
-                                    </button>
-                                </div>
-                            `;
-                            resultsGrid.appendChild(trackRow);
-                        }
-                    } catch (e) {
-                        continue;
-                    }
-                }
-
-                loading.classList.add('hidden');
-                if (linesRendered === 0) {
-                    noResults.classList.remove('hidden');
-                }
-
-            } catch (err) {
-                loading.classList.add('hidden');
-                alert("Matrix system layer timeout. Re-initialize sequence parameter query.");
-            }
-        }
-
-        function ignitePlayerEngine(url, name, artist) {
-            currentActiveUrl = url;
-            currentActiveTitle = name;
-            currentActiveArtist = artist;
-            
-            playerName.textContent = name;
-            playerArtist.textContent = artist;
-            
-            mainAudio.src = url;
-            playerContainer.classList.remove('hidden');
-            setTimeout(() => playerContainer.classList.remove('translate-y-full'), 50);
-            
-            mainAudio.play();
-        }
-
-        function forceFileDownload(url, name, artist) {
-            const cleanFileName = `${name} - ${artist}.mp3`.replace(/[/\\?%*:|"<>]/g, '-');
-            
-            // Commit exact track information signature safely to memory log history
-            logDeviceDownloadHabit(name);
-
-            const statusAlert = document.createElement('div');
-            statusAlert.className = 'fixed top-4 right-4 bg-burnt-orange text-white px-4 py-2 rounded-xl text-xs font-bold z-50 shadow-2xl';
-            statusAlert.textContent = "Writing file package to documents folder...";
-            document.body.appendChild(statusAlert);
-
-            fetch(url)
-                .then(res => {
-                    if (!res.ok) throw new Error();
-                    return res.blob();
-                })
-                .then(fileData => {
-                    const cleanBlob = new Blob([fileData], { type: 'audio/mpeg' });
-                    const fileObjectURL = window.URL.createObjectURL(cleanBlob);
+                <div class="w-10 h-10 rounded-md bg-burnt-orange/20 border border-burnt-orange/30 flex items-center justify-center text-burnt-orange shadow-inner
                     
-                    const executionAnchor = document.createElement('a');
-                    executionAnchor.href = fileObjectURL;
-                    executionAnchor.download = cleanFileName;
-                    
-                    document.body.appendChild(executionAnchor);
-    
