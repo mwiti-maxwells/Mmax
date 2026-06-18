@@ -77,7 +77,7 @@
     </footer>
 
     <script>
-        // REPLACE THIS WITH YOUR ACTUAL YOUTUBE DATA API V3 KEY FROM GOOGLE CLOUD CONSOLE
+        // Your live API Key integration is complete
         const YOUTUBE_API_KEY = "AIzaSyCb9D4S7EMkSvR31tuUArDBnR_kF9tcYjo";
 
         const searchInput = document.getElementById('search-input');
@@ -92,7 +92,7 @@
         const streamWrapper = document.getElementById('matrix-stream-wrapper');
 
         window.addEventListener('DOMContentLoaded', () => {
-            executeYouTubeExtraction("Eunice Njeri Praise"); 
+            executeYouTubeExtraction("Zoravo"); 
         });
 
         async function triggerSearch() {
@@ -110,18 +110,10 @@
         searchInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') triggerSearch(); });
 
         async function executeYouTubeExtraction(queryString) {
-            if (YOUTUBE_API_KEY === "YOUR_YOUTUBE_API_KEY_HERE") {
-                loading.classList.add('hidden');
-                gridContextTitle.textContent = "API Key Missing!";
-                resultsGrid.innerHTML = `<div class="col-span-full text-center text-xs text-red-400 p-4 bg-red-950/20 border border-red-900 rounded-lg">Please replace <strong>YOUR_YOUTUBE_API_KEY_HERE</strong> in the script tags with your actual Google Developer API key.</div>`;
-                return;
-            }
-
             try {
                 loading.classList.remove('hidden');
                 noResults.classList.add('hidden');
                 
-                // Forcing target parameters directly into query for better results
                 let targetQuery = encodeURIComponent(`${queryString} gospel music`);
                 let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&q=${targetQuery}&type=video&videoCategoryId=10&key=${YOUTUBE_API_KEY}`;
                 
@@ -137,27 +129,20 @@
                     return;
                 }
 
-                // Filtering rules
-                const blocklist = ['weed', 'political', 'speech', 'conference', 'news'];
-
                 items.forEach(item => {
                     let title = item.snippet.title || "Unmapped Stream";
                     let channelTitle = item.snippet.channelTitle || "Unknown Source";
                     let videoId = item.id.videoId;
                     let thumbnailUrl = item.snippet.thumbnails.medium.url;
-                    
-                    let tLow = title.toLowerCase();
-                    if (blocklist.some(word => tLow.includes(word))) return;
 
-                    // Clean titles containing HTML entities
-                    let cleanTitle = title.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+                    let cleanTitle = title.replace(/"/g, '"').replace(/'/g, "'");
 
                     let card = document.createElement('div');
                     card.className = 'matrix-card p-2 flex flex-col justify-between';
                     card.innerHTML = `
                         <div>
                             <div class="audio-preview-box bg-cover bg-center" style="background-image: url('${thumbnailUrl}')">
-                                <div class="absolute inset-0 bg-black/40 backdrop-blur-xs"></div>
+                                <div class="absolute inset-0 bg-black/40"></div>
                                 <i class="fa-brands fa-youtube text-red-600 text-3xl absolute z-10 opacity-90"></i>
                             </div>
                             <div class="p-2 min-w-0">
@@ -165,10 +150,18 @@
                                 <p class="text-[9px] text-gold truncate"><i class="fa-solid fa-circle-check text-[8px] mr-1"></i>${channelTitle}</p>
                             </div>
                         </div>
-                        <div class="p-1 mt-2">
+                        <div class="p-1 mt-2 flex flex-col gap-1.5">
                             <button onclick="streamVideo('${videoId}', '${cleanTitle.replace(/'/g, "\\'")}', '${channelTitle.replace(/'/g, "\\'")}')" class="w-full bg-burnt-orange hover:bg-orange-700 text-white font-bold py-1.5 px-2 rounded text-[9px] uppercase tracking-wider flex items-center justify-center gap-1 transition">
                                 <i class="fa-solid fa-bolt text-[8px]"></i> Feed Stream
                             </button>
+                            <div class="grid grid-cols-2 gap-1">
+                                <button onclick="triggerPayloadDownload('${videoId}', 'mp3')" class="bg-zinc-800 hover:bg-zinc-700 text-gold text-[8px] font-bold py-1 px-1 rounded flex items-center justify-center gap-1 uppercase tracking-tighter border border-white/5 transition">
+                                    <i class="fa-solid fa-music"></i> Audio
+                                </button>
+                                <button onclick="triggerPayloadDownload('${videoId}', 'mp4')" class="bg-zinc-800 hover:bg-zinc-700 text-white text-[8px] font-bold py-1 px-1 rounded flex items-center justify-center gap-1 uppercase tracking-tighter border border-white/5 transition">
+                                    <i class="fa-solid fa-video"></i> Video
+                                </button>
+                            </div>
                         </div>
                     `;
                     resultsGrid.appendChild(card);
@@ -183,8 +176,6 @@
         function streamVideo(id, title, artist) {
             playerName.textContent = title; 
             playerArtist.textContent = artist;
-            
-            // Injecting minimal YouTube embed container into bottom matrix bar
             streamWrapper.innerHTML = `
                 <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/${id}?autoplay=1&modestbranding=1&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -192,7 +183,14 @@
             `;
             playerContainer.classList.remove('hidden');
         }
+
+        function triggerPayloadDownload(id, format) {
+            let gatewayUrl = `https://9xbuddy.xyz/process?url=https://www.youtube.com/watch?v=${id}`;
+            if(format === 'mp3') {
+                gatewayUrl = `https://www.y2mate.com/youtube/${id}`;
+            }
+            window.open(gatewayUrl, '_blank');
+        }
     </script>
 </body>
-            </html>
-            
+</html>
