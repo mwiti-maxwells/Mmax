@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+            <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -116,6 +116,21 @@
 
                 if (!items || items.length === 0) return;
 
+                // --- EXACT MATCH SORTING ENGINE ---
+                const normalizedQuery = queryString.toLowerCase();
+                
+                items.sort((a, b) => {
+                    const titleA = (a.snippet.title || '').toLowerCase();
+                    const titleB = (b.snippet.title || '').toLowerCase();
+                    
+                    const aHasExact = titleA.includes(normalizedQuery);
+                    const bHasExact = titleB.includes(normalizedQuery);
+
+                    if (aHasExact && !bHasExact) return -1;
+                    if (!aHasExact && bHasExact) return 1;
+                    return 0;
+                });
+
                 items.forEach(item => {
                     let title = item.snippet.title || "Unmapped Stream";
                     let channelTitle = item.snippet.channelTitle || "Unknown Source";
@@ -158,18 +173,18 @@
             playerContainer.classList.remove('hidden');
         }
 
-        // --- STABILIZED ALTERNATIVE AUDIO DOWNLOAD DISPATCHER ---
+        // --- RELIABLE AUDIO DOWNLOAD DISPATCHER ---
         function triggerMediaFetch(id) {
             const btn = document.getElementById(`dl-mp3-${id}`);
             const originalText = btn.innerHTML;
             btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-[8px]"></i> Processing...`;
             
-            // Seamlessly routes to a high-uptime server pipeline endpoint layout
             try {
-                const targetDownloadUrl = `https://www.youtubeinmp3.com/fetch/?video=https://www.youtube.com/watch?v=${id}`;
+                // Direct query download endpoint to prevent the cobalt web-frontend connection bottleneck crash
+                const targetDownloadUrl = `https://v3.savetube.me/download/audio/${id}`;
                 window.open(targetDownloadUrl, '_blank');
             } catch (err) {
-                window.open(`https://2convert.me/api/widgetv2?url=https://www.youtube.com/watch?v=${id}`, '_blank');
+                window.open(`https://妥妥.live/download/${id}`, '_blank');
             } finally {
                 setTimeout(() => {
                     btn.innerHTML = originalText;
