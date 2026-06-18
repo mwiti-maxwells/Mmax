@@ -120,7 +120,7 @@
                     return;
                 }
 
-                // --- EXACT MATCH SORTING ENGINE ---
+                // Exact match logic prioritizes exact searches first
                 const normalizedQuery = queryString.toLowerCase();
                 items.sort((a, b) => {
                     const titleA = (a.snippet.title || '').toLowerCase();
@@ -157,7 +157,7 @@
                             <button onclick="streamVideo('${videoId}', '${cleanTitle}', '${channelTitle.replace(/'/g, "\\'")}')" class="w-full bg-burnt-orange hover:bg-orange-700 text-white font-bold py-1.5 rounded text-[8px] uppercase tracking-wider flex items-center justify-center gap-1 transition">
                                 <i class="fa-solid fa-bolt text-[7px]"></i> STREAM
                             </button>
-                            <button id="dl-mp3-${videoId}" onclick="triggerLocalDownload('${videoId}')" class="w-full bg-zinc-800 hover:bg-zinc-700 text-gold text-[8px] font-bold py-1.5 rounded flex items-center justify-center gap-1 uppercase border border-white/5 transition">
+                            <button id="dl-mp3-${videoId}" onclick="processSystemDownload('${videoId}', '${cleanTitle}')" class="w-full bg-zinc-800 hover:bg-zinc-700 text-gold text-[8px] font-bold py-1.5 rounded flex items-center justify-center gap-1 uppercase border border-white/5 transition">
                                 <i class="fa-solid fa-download text-[7px]"></i> Download Audio
                             </button>
                         </div>
@@ -178,28 +178,32 @@
             playerContainer.classList.remove('hidden');
         }
 
-        // --- FIXED HIGH-PERFORMANCE AUDIO DOWNLOAD DIRECT ROUTER ---
-        async function triggerLocalDownload(id) {
+        // --- INCORPORATED DIRECT BACKGROUND PROCESSING ENGINE ---
+        async function processSystemDownload(id, trackName) {
             const btn = document.getElementById(`dl-mp3-${id}`);
             const originalText = btn.innerHTML;
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-[8px]"></i> Downloading...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-[8px]"></i> Transcoding...`;
             btn.disabled = true;
 
             try {
-                // High-performance API conversion pipeline
-                const apiUrl = `https://api.conveye.cloud/v1/convert?url=https://www.youtube.com/watch?v=${id}&format=mp3`;
-                const response = await fetch(apiUrl);
-                const data = await response.json();
+                // Hits a backend api endpoint directly to receive the direct download link 
+                const response = await fetch(`https://api.vvexdw.org/v1/convert?id=${id}&type=mp3`);
+                const result = await response.json();
 
-                if (data && data.url) {
-                    window.location.href = data.url;
+                if (result && result.download_url) {
+                    // Forces the browser to handle it as a direct file download save
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = result.download_url;
+                    downloadLink.setAttribute('download', `${trackName}.mp3`);
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    downloadLink.remove();
                 } else {
-                    // Fail-safe direct background download gateway path
-                    window.location.href = `https://tomp3.cc/api/download/audio/${id}`;
+                    throw new Error('Backend link failed');
                 }
             } catch (err) {
-                // Last resort automated fallback gateway link
-                window.open(`https://9xbuddy.in/process?url=https://www.youtube.com/watch?v=${id}`, '_blank');
+                // Secondary fallback direct server connection 
+                window.location.href = `https://convert.worker-stream.me/api/download/${id}`;
             } finally {
                 setTimeout(() => {
                     btn.innerHTML = originalText;
